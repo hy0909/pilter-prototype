@@ -120,7 +120,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 #home .brand{height:48px;display:flex;align-items:center;padding:12px 20px;font:400 22px/1 'Readex Pro';color:var(--teal-90);letter-spacing:-.44px}
 #home .cards{display:flex;gap:12px;padding:40px 20px 20px}
 #home .card{flex:1;background:#fff;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:36px;text-align:left}
-#home .card span{font:600 18px/1.5 Pretendard;color:var(--g900);letter-spacing:-.28px}
+#home .card span{font:700 20px/1.4 Pretendard;color:var(--g900);letter-spacing:0}   /* 피그마 title/sm */
 #home .card .ico{width:44px;height:44px;position:relative;overflow:hidden}
 #home .card .ico img{position:absolute}
 .sec-title{display:flex;align-items:center;padding:24px 20px 12px;font:600 16px/1.5 Pretendard;color:var(--g700);letter-spacing:-.25px}
@@ -977,19 +977,32 @@ function finishShoot(){
 
 /* ---------- 분석 로딩 ---------- */
 const STEPS = [['영상 첨부'],['AI 분석'],['결과 생성']];
+const STEP_LABEL = {wait:'대기 중', run:'중', done:'완료'};
+let loadTimers = [];
 function runLoading(){
+  // 이전에 예약된 단계·이동 타이머를 모두 취소하고 처음부터 다시 시작
+  loadTimers.forEach(clearTimeout);
+  loadTimers = [];
+  const later = (fn, t) => loadTimers.push(setTimeout(fn, t));
   const el = $('#steps');
-  const paint = (i, phase) => {
-    el.innerHTML = STEPS.map((s,k) => {
-      const st = k < i ? 'done' : (k === i && phase==='run') ? 'run' : '';
-      const txt = k < i ? '완료' : (k === i && phase==='run') ? '중' : '대기 중';
-      return `<div class="step ${st}"><span class="spin"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="var(--g200)" stroke-width="2.5"/><path d="M12 3.5a8.5 8.5 0 1 1-8.5 8.5" stroke="var(--teal-60)" stroke-width="2.5" stroke-linecap="round"/></svg></span><img class="ok" src="assets/ic_check.svg" alt="">${s[0]} ${txt}</div>`;
-    }).join('');
+  // 단계 줄은 화면에 들어올 때 한 번만 만든다 (innerHTML 전체 재생성 금지)
+  el.innerHTML = STEPS.map(() => `<div class="step"><span class="spin"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="var(--g200)" stroke-width="2.5"/><path d="M12 3.5a8.5 8.5 0 1 1-8.5 8.5" stroke="var(--teal-60)" stroke-width="2.5" stroke-linecap="round"/></svg></span><img class="ok" src="assets/ic_check.svg" alt=""><span class="lbl"></span></div>`).join('');
+  const cur = STEPS.map(() => null);
+  // 상태가 바뀐 줄만 고친다. 같은 상태면 아무것도 하지 않아서 완료 아이콘이 다시 뜨지 않는다
+  const setStep = (k, st) => {
+    if (cur[k] === st) return;
+    cur[k] = st;
+    const row = el.children[k];
+    row.className = st === 'wait' ? 'step' : `step ${st}`;
+    row.querySelector('.lbl').textContent = `${STEPS[k][0]} ${STEP_LABEL[st]}`;
   };
+  // i번째 단계가 진행 중(run)이면 그 앞은 모두 완료
+  const paint = (i, phase) => STEPS.forEach((_, k) =>
+    setStep(k, k < i ? 'done' : (k === i && phase === 'run') ? 'run' : 'wait'));
   paint(0,'wait');
   const seq = [[0,'run',500],[1,'run',1400],[2,'run',2600],[3,'done',3600]];
-  seq.forEach(([i,p,t]) => setTimeout(()=>{ if(current==='loading') paint(i,p); }, t));
-  setTimeout(()=>{
+  seq.forEach(([i,p,t]) => later(()=>{ if(current==='loading') paint(i,p); }, t));
+  later(()=>{
     if (current !== 'loading') return;
     const n = new Date();
     const r = makeRecord(`new${Date.now()}`, new Date(TODAY), n.getHours(), n.getMinutes(), 'err');
