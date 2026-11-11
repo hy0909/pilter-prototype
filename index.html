@@ -60,8 +60,8 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 #splash .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:40px}
 #splash .logo{width:111px;height:142px;object-fit:cover;margin-bottom:-4px}
 #splash .word{font:400 32px/1.313 'Readex Pro';color:#078185;letter-spacing:-.8px}
-#splash .copy{font:500 24px/1.333 Pretendard;letter-spacing:-.552px;text-align:center;color:#1e293b}
-#splash .copy b{color:#078185;font-weight:500}
+#splash .copy{font:600 24px/1.333 Pretendard;letter-spacing:-.552px;text-align:center;color:#1e293b}
+#splash .copy b{color:#078185;font-weight:600}
 #splash .fade{animation:fade .6s ease both}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
@@ -127,6 +127,17 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .ritem .no{width:28px;margin-right:-8px;flex:none;font:600 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.308px}
 #histList .ritem{height:44px;padding:0 16px;border-radius:10px}
 .ritem.white{background:#fff}
+.ritem{cursor:pointer}
+.ritem .kebab{flex:none;width:24px;height:24px;margin:0 -8px 0 -2px;display:flex;align-items:center;justify-content:center;color:var(--g300);border-radius:6px}
+.ritem .kebab:active{background:var(--g150)}
+.rmenu{position:absolute;z-index:55;display:none;min-width:120px;background:#fff;border-radius:10px;padding:4px;box-shadow:0 4px 16px rgba(15,23,42,.14),0 0 0 1px var(--g150)}
+.rmenu.on{display:block;animation:fade .15s ease}
+.rmenu button{width:100%;height:40px;padding:0 12px;display:flex;align-items:center;gap:8px;border-radius:6px;font:500 14px/1.429 Pretendard;color:var(--coral-70);text-align:left}
+.rmenu button:active{background:var(--g100)}
+.btn.danger{background:var(--coral-60);color:#fff}
+.ddel{padding:4px 20px 44px}
+.btn.delbtn{border:1px solid var(--g300);background:#fff;color:var(--coral-70)}
+#detail.byp .ddel{display:none}
 .ritem.new{animation:newrow 1.6s ease}
 @keyframes newrow{0%{box-shadow:0 0 0 2px var(--teal-60)}100%{box-shadow:0 0 0 2px transparent}}
 
@@ -304,7 +315,8 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .player .full{font-size:16px}
 .when{background:#fff;border-radius:12px;height:48px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;font:400 14px/1.571 Pretendard;letter-spacing:-.28px}
 .when span:first-child{font:600 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.3px} .when span:last-child{color:var(--g700);white-space:pre}
-.bags{display:flex;flex-direction:column;gap:8px;padding:0 20px 44px}
+.bags{display:flex;flex-direction:column;gap:8px;padding:0 20px 20px}
+#detail.byp .bags{padding-bottom:44px}
 .bag{background:#fff;border:1px solid transparent;border-radius:12px;height:48px;padding:0 16px;display:flex;align-items:center;gap:8px;text-align:left;width:100%;transition:background .2s,border-color .2s}
 .bag .n{flex:1;font:600 14px/1.429 Pretendard;color:var(--g700);letter-spacing:-.3px}
 .bag .why{display:block;font:500 13px/1.385 Pretendard;letter-spacing:.25px}
@@ -583,6 +595,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
       </div>
       <div class="sec-title bagtitle"><span id="dBagTitle">포장별 검사 결과</span><em id="dBagCount"></em></div>
       <div class="bags" id="dBags"></div>
+      <div class="ddel"><button class="btn delbtn tap" id="dDel">삭제</button></div>
     </div>
   </section>
 
@@ -615,6 +628,14 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
     <h3>서버 주소</h3>
     <input class="field" id="serverInput" value="https://xxxx.ngrok-free.app">
     <div class="row2"><button class="btn line tap" id="serverCancel">취소</button><button class="btn primary tap" id="serverSave">저장</button></div>
+  </div></div>
+  <!-- 목록 더보기 메뉴 -->
+  <div class="rmenu" id="rMenu" role="menu"><button id="rMenuDel" role="menuitem"><span class="ti"></span>삭제</button></div>
+  <!-- 삭제 확인 -->
+  <div class="dim center" id="delDim"><div class="modal port" role="dialog" aria-labelledby="delTitle">
+    <h3 id="delTitle">검사 기록을 삭제할까요?</h3>
+    <p>삭제한 기록은 다시 되돌릴 수 없어요.</p>
+    <div class="row2"><button class="btn line tap" id="delNo">취소</button><button class="btn danger tap" id="delYes">삭제</button></div>
   </div></div>
 </div></div>
 
@@ -693,6 +714,8 @@ let current = null; const stack = [];
 const ICON = {
   play: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>',
   pause: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><rect x="14" y="4" width="4" height="16" rx="1"/><rect x="6" y="4" width="4" height="16" rx="1"/></svg>',
+  more: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>',
+  trash: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>',
   maximize: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>'
 };
 function setPlayIcon(btn, playing){ btn.innerHTML = playing ? ICON.pause : ICON.play; btn.setAttribute('aria-label', playing ? '일시정지' : '재생'); }
@@ -709,15 +732,39 @@ function show(id, {push=true}={}){
   fit();
 }
 device.insertAdjacentHTML('beforeend', '<div class="navbar" aria-hidden="true"><i></i></div>');
-setPlayIcon($('#pPlay'), false); setPlayIcon($('#rPlay'), true); $('#pFull').innerHTML = ICON.maximize;
+$('#rMenuDel .ti').outerHTML = ICON.trash; setPlayIcon($('#pPlay'), false); setPlayIcon($('#rPlay'), true); $('#pFull').innerHTML = ICON.maximize;
 function back(){ const prev = stack.pop() || 'home'; show(prev, {push:false}); }
 function tab(id){ stack.length = 0; show(id, {push:false}); }
 document.addEventListener('click', e => {
   const g = e.target.closest('[data-go]'); if (g) show(g.dataset.go);
   const t = e.target.closest('[data-tab]'); if (t) tab(t.dataset.tab);
   if (e.target.closest('[data-back]')) back();
+  const k = e.target.closest('[data-menu]'); if (k){ openRowMenu(k); return; }
+  if (!e.target.closest('#rMenu')) closeRowMenu();
   const r = e.target.closest('[data-rec]'); if (r) openDetail(r.dataset.rec);
 });
+
+/* ---------- 기록 삭제 ---------- */
+let menuRec = null, delTarget = null;
+function openRowMenu(btn){
+  const m = $('#rMenu'); menuRec = btn.dataset.menu;
+  const dr = device.getBoundingClientRect(), sc = dr.width / device.offsetWidth, br = btn.getBoundingClientRect();
+  const top = (br.bottom - dr.top) / sc + 4, right = (dr.right - br.right) / sc;
+  m.style.top = Math.min(top, device.offsetHeight - 70) + 'px'; m.style.right = right + 'px';
+  m.classList.add('on');
+}
+function closeRowMenu(){ $('#rMenu').classList.remove('on'); }
+function askDelete(id){ delTarget = id; closeRowMenu(); $('#delDim').classList.add('on'); }
+function deleteRecord(id){
+  for (const k in DB) DB[k] = DB[k].filter(r => r.id !== id);
+  if (current === 'detail') back();
+  else if (current === 'home') renderHome();
+  else if (current === 'history') renderHistory();
+}
+$('#rMenuDel').onclick = () => askDelete(menuRec);
+$('#delNo').onclick = () => { $('#delDim').classList.remove('on'); delTarget = null; };
+$('#delYes').onclick = () => { $('#delDim').classList.remove('on'); if (delTarget) deleteRecord(delTarget); delTarget = null; };
+$('#dDel').onclick = () => askDelete(dRec.id);
 
 /* 화면 크기에 맞게 기기 축소 */
 function fit(){
@@ -773,9 +820,9 @@ function relTime(r){
 }
 const shortDate = r => `${r.date.getMonth()+1}. ${r.date.getDate()}. ${WD[r.date.getDay()]} ${ampm(r.h,r.m)}`;
 function rowHTML(r, {num=null, white=false, rel=false, withDate=false, isNew=false}={}){
-  return `<button class="ritem tap ${white?'white':''} ${isNew?'new':''}" data-rec="${r.id}">
+  return `<div class="ritem tap ${white?'white':''} ${isNew?'new':''}" data-rec="${r.id}" role="button" tabindex="0">
     ${num!==null?`<span class="no">${num}</span>`:''}${badge(r.status)}<span class="t">${label(r)}</span>
-    <span class="time">${withDate?shortDate(r):rel?relTime(r):ampm(r.h,r.m)}</span></button>`;
+    <span class="time">${withDate?shortDate(r):rel?relTime(r):ampm(r.h,r.m)}</span><button class="kebab" data-menu="${r.id}" aria-label="더보기">${ICON.more}</button></div>`;
 }
 let lastNewId = null;
 function renderHome(){
@@ -1004,7 +1051,7 @@ function renderDetail(){
       `<div class="patient ${st} ${st!=='ok'?'open':''}"><button class="phead tap" data-patient><img class="pava" src="${PATIENT_IMG[i % PATIENT_IMG.length]}" alt=""><span class="ptxt"><span class="pname">환자 ${i+1}</span></span>${badge(st)}<img class="chev" src="assets/chevron_right.svg" alt=""></button><div class="pbody"><div><img class="pouch" src="${POUCH_IMG[i % POUCH_IMG.length]}" alt="환자 ${i+1} 약봉지 이미지">${sortBad(g).map(n => bagHTML(n, g.indexOf(n)+1, true)).join('')}</div></div></div>`
     ).join('');
   } else {
-    $('#dBags').innerHTML = sortBad(all).map(bagHTML).join('');
+    $('#dBags').innerHTML = sortBad(all).map(n => bagHTML(n)).join('');
   }
   $('#pTrack').querySelectorAll('.mark').forEach(m=>m.remove());
   r.anomalies.forEach(a => { const m = document.createElement('i'); m.className='mark'; m.style.left = (a.start/VIDEO_LEN*100)+'%'; m.style.width = ((a.end-a.start)/VIDEO_LEN*100)+'%'; $('#pTrack').appendChild(m); });
