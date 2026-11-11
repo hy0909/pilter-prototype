@@ -669,7 +669,9 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
   <button data-jump="detail-err">검사 상세 · 오류</button>
   <button data-jump="detail-ok">검사 상세 · 정상</button>
   <button data-jump="detail-fail">검사 상세 · 실패</button>
-  <button data-jump="stats">오류 통계</button>
+  <button data-jump="result-ok">분석 결과 · 정상</button>
+  <button data-jump="result-err">분석 결과 · 오류</button>
+  <button data-jump="result-fail">분석 결과 · 실패</button>
   <button data-jump="settings">설정</button>
 </nav>
 
@@ -1162,7 +1164,11 @@ document.querySelectorAll('[data-jump]').forEach(b => b.onclick = () => {
   if (j.startsWith('detail-')){
     const st = j.split('-')[1];
     const r = recordsOf(TODAY).find(x=>x.status===st);
-    stack.push('history'); dRec = r; show('detail',{push:false});
+    stack.push('history'); dRec = r; dByPatient = false; show('detail',{push:false});
+  } else if (j.startsWith('result-')){
+    const st = j.split('-')[1];
+    const r = recordsOf(TODAY).find(x=>x.status===st);
+    openDetail(r.id, {fromResult:true});   // 촬영 직후 화면: 환자별로 묶어 보여 줌
   } else { if (!['home','history','settings','splash','onboarding'].includes(j)) stack.push('home'); show(j,{push:false}); }
 });
 
