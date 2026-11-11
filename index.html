@@ -330,7 +330,9 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .phead{width:100%;height:52px;padding:0 12px 0 16px;display:flex;align-items:center;gap:8px;text-align:left}
 .phead .pname{font:600 15px/1.467 Pretendard;color:var(--g700);letter-spacing:-.15px}
 .sico{flex:none} .sico.ok circle:first-child{fill:var(--teal-60)} .sico.err circle:first-child{fill:var(--coral-60)} .sico.fail circle:first-child{fill:var(--g400)}
-#detail.byp #player{display:none}
+#detail #player{display:none}   /* 영상은 어느 화면에서도 보이지 않음 */
+.dpouch{display:none;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;border:1px solid var(--g300);background:var(--g200)}
+#detail:not(.byp) .dpouch{display:block}   /* 검사 상세: 약봉지 이미지 한 장 */
 .pouch{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;background:var(--g200)}
 .phead .pava{width:32px;height:32px;border-radius:50%;flex:none;object-fit:cover}
 .phead .ptxt{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -592,6 +594,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
             <button class="full" id="pFull" aria-label="크게 보기"></button>
           </div>
         </div>
+        <img class="dpouch" id="dPouch" src="assets/pouch1.jpg" alt="약봉지 이미지">
         <div class="when"><span>검사일</span><span id="dWhen"></span></div>
       </div>
       <div class="sec-title bagtitle"><span id="dBagTitle">포장별 검사 결과</span><em id="dBagCount"></em></div>
@@ -1015,6 +1018,8 @@ function renderDetail(){
   const r = dRec; const el = $('#detail');
   el.classList.remove('ok','err','fail'); el.classList.add(r.status);
   el.classList.toggle('byp', dByPatient);   // 분석 결과: 영상 없이 환자별 약봉지 이미지로 보여 줌 (기존 앱과 같게)
+  // 검사 상세: 영상 대신 약봉지 이미지 한 장을 기록마다 같은 것으로 고정해 보여 줌
+  $('#dPouch').src = POUCH_IMG[[...String(r.id)].reduce((s,c)=>s+c.charCodeAt(0),0) % POUCH_IMG.length];
   const nBad = r.status==='err' ? r.anomalies.length : r.status==='fail' ? r.failBags.length : 0;
   const word = {ok:'정상',err:'오류',fail:'실패'}[r.status];
   const lab = r.status==='fail' ? '실패' : '오류';
@@ -1060,8 +1065,7 @@ function renderDetail(){
   r.anomalies.forEach(a => { const m = document.createElement('i'); m.className='mark'; m.style.left = (a.start/VIDEO_LEN*100)+'%'; m.style.width = ((a.end-a.start)/VIDEO_LEN*100)+'%'; $('#pTrack').appendChild(m); });
   pVideo.currentTime = 0; $('#detailScroll').scrollTop = 0; syncDetailHead();
   syncFlash(pVideo, $('#pFlash'), $('#pTag'), $('#pFill'));
-  if (dByPatient){ pVideo.pause(); setPlayIcon($('#pPlay'), false); return; }
-  pVideo.play().catch(()=>{}); setPlayIcon($('#pPlay'), true);
+  pVideo.pause(); setPlayIcon($('#pPlay'), false);   // 영상은 재생하지 않음
 }
 function activeAnomaly(t){ return dRec ? dRec.anomalies.find(a => t >= a.start && t <= a.end) : null; }
 function syncFlash(v, flash, tag, fill){
@@ -1080,11 +1084,7 @@ function seekOn(track, v){ track.onclick = e => { const r = track.getBoundingCli
 seekOn($('#pTrack'), pVideo);
 $('#dBags').onclick = e => {
   const ph = e.target.closest('[data-patient]'); if (ph){ ph.parentElement.classList.toggle('open'); return; }
-  const b = e.target.closest('[data-bag]'); if (!b || dByPatient) return;
-  const n = +b.dataset.bag; const a = dRec.anomalies.find(x=>x.bag===n);
-  pVideo.currentTime = a ? Math.max(0, a.start - 0.8) : bagTime(n);
-  pVideo.play(); setPlayIcon($('#pPlay'), true);
-  $('#detailScroll').scrollTo({top:0, behavior:'smooth'});
+  // 봉지를 눌러도 아무 일도 일어나지 않음 (영상 탐색 기능은 숨김)
 };
 $('#pFull').onclick = () => { const t = pVideo.currentTime; pVideo.pause(); show('replay'); rVideo.currentTime = t; };
 
@@ -1121,7 +1121,7 @@ const ENTER = {
 };
 // 상세에서 크게 보기 갔다 돌아올 때는 다시 그리지 않음
 const _enterDetail = ENTER.detail; let skipDetailRender = false;
-ENTER.detail = () => { if (skipDetailRender){ skipDetailRender=false; pVideo.play().catch(()=>{}); return; } _enterDetail(); };
+ENTER.detail = () => { if (skipDetailRender){ skipDetailRender=false; pVideo.pause(); return; } _enterDetail(); };
 const _back = back;
 back = function(){ if (current==='replay') skipDetailRender = true; _back(); };
 
