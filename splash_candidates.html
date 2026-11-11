@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>스플래시 효과 후보</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:Pretendard,sans-serif;background:#f1f5f9;color:#1e293b;padding:20px 16px 40px}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+h1{font-size:18px;font-weight:600}
+header p{font-size:13px;color:#64748b;flex:1;min-width:200px}
+button.re{border:0;background:#078185;color:#fff;font:600 13px Pretendard;padding:8px 14px;border-radius:8px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
+.card{background:#fff;border-radius:14px;padding:10px;cursor:pointer;border:2px solid transparent}
+.card:hover{border-color:#99d5d6}
+.card .meta{padding:8px 4px 2px}
+.card .t{font-size:14px;font-weight:600}
+.card .t span{color:#078185;margin-right:4px}
+.card .d{font-size:12px;color:#64748b;margin-top:2px;line-height:1.4}
+.phone{width:180px;height:320px;margin:0 auto;border-radius:12px;overflow:hidden;background:#fff;border:1px solid #e2e8f0;position:relative}
+.stage{width:360px;height:640px;transform:scale(.5);transform-origin:0 0;position:absolute;left:0;top:0;perspective:800px}
+.layer{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:40px}
+.copy{font:600 24px/1.333 Pretendard;letter-spacing:-.552px;text-align:center;color:#1e293b}
+.copy b{color:#078185;font-weight:600}
+.logoWrap{display:flex;justify-content:center}
+.logo{width:111px;height:142px;object-fit:cover;margin-bottom:-4px;display:block}
+.word{font:400 32px/1.313 'Readex Pro';color:#078185;letter-spacing:-.8px;display:flex}
+.word i{font-style:normal;display:inline-block}
+.hide{opacity:0}
+
+/* 공통: 문구 들어오기 */
+@keyframes copyIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* 문구 나가기 */
+@keyframes outBlurUp{to{opacity:0;transform:translateY(-8px);filter:blur(4px)}}
+@keyframes outFade{to{opacity:0}}
+@keyframes outUp{to{opacity:0;transform:translateY(-40px)}}
+@keyframes outPush{to{opacity:0;transform:translateY(-120px)}}
+@keyframes outShrink{to{opacity:0;transform:scale(.92)}}
+@keyframes outGrow{to{opacity:0;transform:scale(1.08);filter:blur(3px)}}
+@keyframes outWipe{to{clip-path:inset(0 0 0 100%)}}
+@keyframes outFlip{to{opacity:0;transform:rotateY(90deg)}}
+@keyframes outTilt{to{opacity:0;transform:rotateX(-60deg) translateY(-20px)}}
+
+/* 로고·글자 들어오기 */
+@keyframes inBlurScale{from{opacity:0;transform:scale(.86);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+@keyframes inFade{from{opacity:0}to{opacity:1}}
+@keyframes inUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes inDown{from{opacity:0;transform:translateY(-24px)}to{opacity:1;transform:none}}
+@keyframes inPop{0%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1.06)}80%{transform:scale(.98)}100%{opacity:1;transform:none}}
+@keyframes inZoomOut{from{opacity:0;transform:scale(1.25)}to{opacity:1;transform:none}}
+@keyframes inWipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes inCircle{from{clip-path:circle(0% at 50% 50%)}to{clip-path:circle(75% at 50% 50%)}}
+@keyframes inPush{from{opacity:0;transform:translateY(120px)}to{opacity:1;transform:none}}
+@keyframes inRotate{from{opacity:0;transform:rotate(-10deg) scale(.9)}to{opacity:1;transform:none}}
+@keyframes inFlip{from{opacity:0;transform:rotateY(-90deg)}to{opacity:1;transform:none}}
+@keyframes inBounce{0%{opacity:0;transform:translateY(-80px)}50%{opacity:1;transform:translateY(0)}68%{transform:translateY(-14px)}84%{transform:translateY(0)}92%{transform:translateY(-4px)}100%{opacity:1;transform:none}}
+@keyframes inLetter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes inLeft{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@keyframes inBlur{from{opacity:0;filter:blur(10px)}to{opacity:1;filter:none}}
+@keyframes inJelly{0%{opacity:0;transform:scale(.7,.7)}40%{opacity:1;transform:scale(1.12,.9)}60%{transform:scale(.94,1.06)}80%{transform:scale(1.03,.98)}100%{opacity:1;transform:none}}
+@keyframes inGlow{0%{opacity:0;filter:brightness(2.2) blur(4px)}50%{opacity:1;filter:brightness(1.4) blur(1px)}100%{opacity:1;filter:none}}
+@keyframes inTilt{from{opacity:0;transform:rotateX(60deg) translateY(20px)}to{opacity:1;transform:none}}
+@keyframes inRise{from{transform:translateY(105%)}to{transform:none}}
+@keyframes inSlowScale{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>스플래시 효과 후보 20개</h1>
+  <p>모든 카드가 3.6초마다 다시 재생돼요. 카드를 누르면 그 카드만 처음부터 다시 나와요.</p>
+  <button class="re" id="replay">전체 다시 재생</button>
+</header>
+<div class="grid" id="grid"></div>
+
+<script>
+const E = 'cubic-bezier(.2,.8,.2,1)';
+// out: 문구 나가기, logo/word: 들어오기, at: 로고 시작 시점(ms)
+const FX = [
+  {n:'블러 + 살짝 확대', d:'지금 적용한 효과. 흐릿하게 커지며 또렷해져요', out:`outBlurUp .35s ease-in`, logo:`inBlurScale .7s ${E}`, word:`inUp .6s ${E} .15s`},
+  {n:'단순 페이드', d:'움직임 없이 천천히 나타나요', out:`outFade .4s ease`, logo:`inFade .8s ease`, word:`inFade .8s ease .1s`},
+  {n:'아래에서 올라오기', d:'로고와 글자가 차례로 살짝 올라와요', out:`outUp .4s ease-in`, logo:`inUp .6s ${E}`, word:`inUp .6s ${E} .12s`},
+  {n:'위에서 내려오기', d:'로고가 위에서 부드럽게 내려앉아요', out:`outFade .35s ease`, logo:`inDown .7s ${E}`, word:`inFade .5s ease .25s`},
+  {n:'스프링 팝', d:'작게 시작해 살짝 튕기며 커져요', out:`outShrink .3s ease-in`, logo:`inPop .7s ease-out`, word:`inUp .5s ${E} .3s`},
+  {n:'줌 아웃', d:'크게 시작해 제자리로 작아져요', out:`outGrow .35s ease-in`, logo:`inZoomOut .8s ${E}`, word:`inFade .6s ease .2s`},
+  {n:'좌우 와이프', d:'왼쪽부터 커튼 걷히듯 드러나요', out:`outWipe .4s ease-in`, logo:`inWipe .6s ${E}`, word:`inWipe .6s ${E} .15s`},
+  {n:'원형 리빌', d:'가운데에서 원이 퍼지며 드러나요', out:`outFade .35s ease`, logo:`inCircle .7s ${E}`, word:`inFade .5s ease .3s`},
+  {n:'위로 밀어내기', d:'문구를 위로 밀어 올리며 로고가 올라와요', out:`outPush .5s cubic-bezier(.6,0,.4,1)`, logo:`inPush .5s cubic-bezier(.6,0,.4,1)`, word:`inPush .5s cubic-bezier(.6,0,.4,1) .05s`, at:1150},
+  {n:'겹쳐서 바뀌기', d:'문구가 사라지는 동안 로고가 겹쳐 나타나요', out:`outFade .6s ease`, logo:`inSlowScale .8s ease`, word:`inFade .8s ease .1s`, at:1250},
+  {n:'살짝 회전', d:'비스듬히 돌며 자리를 잡아요', out:`outFade .35s ease`, logo:`inRotate .7s ${E}`, word:`inUp .5s ${E} .2s`},
+  {n:'카드 뒤집기', d:'문구가 돌아가고 로고가 뒤집혀 나와요', out:`outFlip .35s ease-in`, logo:`inFlip .6s ${E}`, word:`inFade .5s ease .25s`},
+  {n:'통통 바운스', d:'떨어져서 몇 번 튀다 멈춰요', out:`outFade .3s ease`, logo:`inBounce .9s ease-out`, word:`inFade .5s ease .45s`},
+  {n:'글자 한 자씩', d:'로고 뒤로 Pilter가 한 글자씩 올라와요', out:`outBlurUp .35s ease-in`, logo:`inSlowScale .6s ${E}`, letters:true},
+  {n:'옆에서 들어오는 글자', d:'로고는 페이드, 글자는 왼쪽에서 들어와요', out:`outFade .35s ease`, logo:`inFade .6s ease`, word:`inLeft .6s ${E} .2s`},
+  {n:'블러만', d:'크기 변화 없이 초점이 맞춰지듯 나타나요', out:`outBlurUp .35s ease-in`, logo:`inBlur .8s ease`, word:`inBlur .8s ease .1s`},
+  {n:'젤리', d:'말랑하게 늘었다 줄며 멈춰요', out:`outShrink .3s ease-in`, logo:`inJelly .8s ease-out`, word:`inUp .5s ${E} .35s`},
+  {n:'빛 번짐', d:'밝게 번지다가 원래 색으로 돌아와요', out:`outFade .35s ease`, logo:`inGlow .8s ease-out`, word:`inGlow .8s ease-out .1s`},
+  {n:'앞으로 기울기', d:'뒤로 누운 상태에서 세워지듯 나타나요', out:`outTilt .4s ease-in`, logo:`inTilt .7s ${E}`, word:`inTilt .7s ${E} .1s`},
+  {n:'바닥선에서 솟기', d:'보이지 않는 선 아래에서 쑥 올라와요', out:`outUp .35s ease-in`, logo:`inRise .7s ${E}`, word:`inRise .7s ${E} .12s`, mask:true},
+];
+
+const grid = document.getElementById('grid');
+const cards = FX.map((f,i)=>{
+  const c = document.createElement('div');
+  c.className='card';
+  c.innerHTML = `<div class="phone"><div class="stage"></div></div>
+    <div class="meta"><div class="t"><span>${i+1}</span>${f.n}</div><div class="d">${f.d}</div></div>`;
+  grid.appendChild(c);
+  const st = c.querySelector('.stage');
+  const timers=[];
+  function play(){
+    timers.splice(0).forEach(clearTimeout);
+    st.innerHTML = `<div class="layer a"><div class="copy" style="animation:copyIn .6s ease both">매일의 검수에<br><b>도움이 필요할 때</b></div></div><div class="layer b"></div>`;
+    const copy = st.querySelector('.copy'), b = st.querySelector('.layer.b');
+    timers.push(setTimeout(()=>{ copy.style.animation = f.out+' both'; }, 1150));
+    timers.push(setTimeout(()=>{
+      const wrap = f.mask?'overflow:hidden;':'';
+      const word = f.letters
+        ? `<div class="word">${[...'Pilter'].map((ch,k)=>`<i style="animation:inLetter .45s ${E} ${.25+k*.06}s both">${ch}</i>`).join('')}</div>`
+        : `<div style="${wrap}"><div class="word" style="animation:${f.word} both">Pilter</div></div>`;
+      b.innerHTML = `<div class="logoWrap" style="${wrap}"><img class="logo" src="assets/logo.png" alt="" style="animation:${f.logo} both"></div>${word}`;
+    }, f.at||1500));
+  }
+  c.addEventListener('click', play);
+  return play;
+});
+function all(){ cards.forEach(p=>p()); }
+document.getElementById('replay').onclick = all;
+all(); setInterval(all, 3600);
+</script>
+</body>
+</html>
