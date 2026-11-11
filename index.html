@@ -1,0 +1,1071 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pilter 프로토타입</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal-60:#0aa0a5; --teal-80:#056467; --teal-90:#004246;
+  --coral-60:#ed7f74; --coral-70:#c05e57;
+  --g0:#fff; --g50:#f8fafc; --g100:#f2f6fa; --g150:#eff4f9; --g200:#e2e8f0; --g300:#cbd5e1;
+  --g400:#94a3b8; --g500:#64748b; --g600:#475569; --g700:#334155; --g800:#1e293b; --g900:#0f172a;
+  --alert: 239, 68, 68;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#d9dee5;font-family:Pretendard,-apple-system,sans-serif;color:var(--g700);display:flex;align-items:center;justify-content:center;overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
+
+/* 기기 틀 */
+.stage{display:flex;align-items:center;justify-content:center;width:100vw;height:100vh}
+.device{width:var(--dw,360px);height:var(--dh,640px);background:#fff;border-radius:28px;overflow:hidden;position:relative;box-shadow:0 0 0 10px #111,0 20px 60px rgba(0,0,0,.35);transition:width .35s ease,height .35s ease;transform-origin:center}
+.device.land{width:640px;height:360px}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden}
+.screen.on{display:flex}
+
+/* 공통 */
+.status{height:24px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font:600 14.9px/1 Inter,Pretendard,sans-serif;color:var(--g900);letter-spacing:-.44px}
+.status img{width:49px;height:13px}
+.status.white{color:#fff}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.badge{display:inline-flex;align-items:center;justify-content:center;padding:1px 6px;border-radius:4px;font:500 13px/1.385 Pretendard;letter-spacing:.25px;color:#fff;flex:none}
+.badge.ok{background:var(--teal-60)} .badge.err{background:var(--coral-60)} .badge.fail{background:var(--g400)}
+.btn{height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font:500 14px/1.429 Pretendard;letter-spacing:.2px;width:100%}
+.btn.primary{background:var(--teal-60);color:#fff}
+.btn.ghost{color:var(--g600)}
+.btn.line{border:1px solid var(--g600);color:var(--g700);background:#fff}
+.tap{transition:transform .12s ease,filter .12s}
+.tap:active{transform:scale(.98);filter:brightness(.97)}
+
+/* 탭바 */
+.tabbar{flex:none;background:#fff;border-top:1px solid var(--g150);height:80px;display:flex;flex-direction:column}
+.tabs{display:flex;height:56px}
+.tabs button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:500 11px/1.273 'Noto Sans KR',Pretendard;letter-spacing:.34px;color:var(--g400)}
+.tabs button.on{color:var(--teal-60)}
+.tabs img{width:24px;height:24px}
+.tabs .set img{width:22px;height:22px;margin:1px}
+.tabs .set.on img{filter:invert(46%) sepia(83%) saturate(1500%) hue-rotate(147deg) brightness(92%)}
+
+/* 스플래시 */
+#splash{background:#fff}
+#splash .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:40px}
+#splash .logo{width:111px;height:142px;object-fit:cover;margin-bottom:-4px}
+#splash .word{font:400 32px/1.313 'Readex Pro';color:#078185;letter-spacing:-.8px}
+#splash .copy{font:600 24px/1.333 Pretendard;letter-spacing:-.552px;text-align:center;color:#1e293b}
+#splash .copy b{color:#078185}
+#splash .fade{animation:fade .6s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* 온보딩 */
+#onboarding .top{flex:1;display:flex;flex-direction:column;background:var(--g100)}
+#onboarding .body{flex:1;background:#fff;display:flex;flex-direction:column;align-items:center}
+#onboarding .ill{width:100%;aspect-ratio:1;height:auto;display:block;overflow:hidden;flex:none;background:var(--g100)}
+#onboarding .ill svg{display:block}
+#onboarding .ill.swap{animation:fade .35s ease both}
+#onboarding h2{font:700 20px/1.4 Pretendard;color:var(--g700);margin-top:20px;text-align:center}
+#onboarding .dots{width:40px;height:8px;margin-top:auto;margin-bottom:0}
+#onboarding .foot{padding:16px 20px;display:flex;flex-direction:column;gap:8px;background:#fff}
+
+/* 홈 */
+#home{background:#fff}
+#home .hero{position:relative;overflow:hidden;background:#5fcfc4;container-type:inline-size}
+/* 원본 배경을 흐리게 깔아 구운 알약 자국을 지우고, 알약은 따로 그려 움직임 */
+#home .hero::before{content:"";position:absolute;inset:-40px;background:url(assets/home_bg.png) center/cover;filter:blur(34px) saturate(1.05);z-index:0}
+#home .hero>*:not(.pills){position:relative;z-index:2}
+/* 배경 위에 한 겹 더 깐 그라데이션: 왼쪽 위 밝은 민트 → 오른쪽 아래 깊은 청록 */
+#home .hero::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:
+  radial-gradient(120% 90% at 0% 0%,rgba(190,255,238,.55) 0%,rgba(190,255,238,0) 55%),
+  radial-gradient(90% 80% at 100% 100%,rgba(4,120,126,.38) 0%,rgba(4,120,126,0) 60%),
+  linear-gradient(160deg,rgba(255,255,255,0) 40%,rgba(10,160,165,.18) 100%)}
+#home .scroll{background:#fff}
+.pills{position:absolute;inset:0;z-index:1;pointer-events:none}
+.pill{position:absolute;will-change:transform,filter}
+.pill svg{display:block}
+.pill img{display:block;width:100%;height:auto}
+/* 가까이 모일 때 선명해지고, 멀어질 때 흐려지는 초점 효과 */
+.pills .down{animation:pillDown 4.2s ease-in-out infinite alternate}
+.pills .up{animation:pillUp 4.2s ease-in-out infinite alternate}
+.pills .far{opacity:.82}
+.pills .far.down{animation-name:pillDownFar}
+.pills .far.up{animation-name:pillUpFar}
+/* 가운데 위 동그란 알약: 멀리 있지만 블러는 약하게 */
+.pills .far.soft{animation-name:pillDownSoft;opacity:.92}
+@keyframes pillDownSoft{from{transform:translateY(-4px) scale(.96);filter:blur(3px)}to{transform:translateY(9px) scale(1);filter:blur(1.8px)}}
+@keyframes pillDown{from{transform:translateY(-6px);filter:blur(3.2px) drop-shadow(0 3px 4px rgba(0,80,90,.12)) drop-shadow(0 12px 16px rgba(0,80,90,.12))}to{transform:translateY(12px);filter:blur(1.6px) drop-shadow(0 4px 5px rgba(0,80,90,.14)) drop-shadow(0 14px 18px rgba(0,80,90,.15))}}
+@keyframes pillUp{from{transform:translateY(6px);filter:blur(3.2px) drop-shadow(0 3px 4px rgba(0,80,90,.12)) drop-shadow(0 12px 16px rgba(0,80,90,.12))}to{transform:translateY(-12px);filter:blur(1.6px) drop-shadow(0 4px 5px rgba(0,80,90,.14)) drop-shadow(0 14px 18px rgba(0,80,90,.15))}}
+@keyframes pillDownFar{from{transform:translateY(-4px) scale(.96);filter:blur(5.6px)}to{transform:translateY(9px) scale(1);filter:blur(3.4px)}}
+@keyframes pillUpFar{from{transform:translateY(4px) scale(.96);filter:blur(5.6px)}to{transform:translateY(-9px) scale(1);filter:blur(3.4px)}}
+/* 밝은 민트 원형 빛 포인트 */
+.glow{position:absolute;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(196,255,240,.85) 0%,rgba(140,245,222,.45) 35%,rgba(140,245,222,0) 70%);mix-blend-mode:screen;filter:blur(6px);animation:glow 6s ease-in-out infinite alternate}
+@keyframes glow{from{transform:translate(0,0) scale(.9);opacity:.55}to{transform:translate(8px,-6px) scale(1.08);opacity:.95}}
+/* 카드 뒤 반투명 유리 느낌 */
+#home .card{background:rgba(255,255,255,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 24px rgba(0,66,70,.10)}
+@media (prefers-reduced-motion:reduce){.pills .up,.pills .down{animation:none}}
+#home .brand{height:48px;display:flex;align-items:center;padding:12px 20px;font:400 22px/1 'Readex Pro';color:var(--teal-90);letter-spacing:-.44px}
+#home .cards{display:flex;gap:12px;padding:40px 20px 20px}
+#home .card{flex:1;background:#fff;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:36px;text-align:left}
+#home .card span{font:600 18px/1.5 Pretendard;color:var(--g900);letter-spacing:-.28px}
+#home .card .ico{width:44px;height:44px;position:relative;overflow:hidden}
+#home .card .ico img{position:absolute}
+.sec-title{display:flex;align-items:center;padding:24px 20px 12px;font:600 16px/1.5 Pretendard;color:var(--g700);letter-spacing:-.25px}
+.sec-title span{flex:1}
+.sec-title button{width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+.sec-title img{width:20px;height:20px}
+.rlist{display:flex;flex-direction:column;gap:8px;padding:0 20px 16px}
+.ritem{background:var(--g100);border-radius:12px;padding:16px;display:flex;align-items:center;gap:8px;text-align:left;width:100%}
+.ritem .t{flex:1;font:600 14px/1.429 Pretendard;color:var(--g700);letter-spacing:-.3px}
+.ritem .time{font:500 11px/1.273 Pretendard;color:var(--g400);letter-spacing:.34px}
+.ritem .no{width:28px;margin-right:-8px;flex:none;font:600 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.308px}
+#histList .ritem{height:44px;padding:0 16px;border-radius:10px}
+.ritem.white{background:#fff}
+.ritem.new{animation:newrow 1.6s ease}
+@keyframes newrow{0%{box-shadow:0 0 0 2px var(--teal-60)}100%{box-shadow:0 0 0 2px transparent}}
+
+/* 검사 내역 */
+#history{background:var(--g150)}
+.head{height:48px;flex:none;display:flex;align-items:center;padding:0 20px;gap:8px}
+.head h1{flex:1;font:700 20px/1.4 Pretendard;color:var(--g900)}
+.head .icbtn{width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+.datebar{display:flex;align-items:center;gap:8px;padding:8px 12px 8px 20px;font:600 15px/1.467 Pretendard;color:var(--g600);letter-spacing:-.15px}
+.datebar button{display:flex;align-items:center;gap:8px;padding:4px 6px;margin:-4px -6px;border-radius:6px}
+.datebar button:hover{background:rgba(0,0,0,.04)}
+.datebar img{width:16px;height:16px}
+.datebar .today{margin-left:auto;font:500 12px/1 Pretendard;color:var(--teal-60);padding:6px 8px;border-radius:6px;background:#fff}
+.datebar .chip{font:500 12px/1 Pretendard;color:var(--g500);background:#fff;padding:5px 8px;border-radius:999px}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--g400);font:400 15px/1.6 Pretendard;padding:60px 20px;text-align:center}
+.empty b{font:600 16px/1.5 Pretendard;color:var(--g600)}
+
+/* 시트·모달 */
+.dim{position:absolute;inset:0;background:rgba(15,23,42,.45);display:none;z-index:50;align-items:flex-end;justify-content:center}
+.dim.on{display:flex;animation:fadein .2s ease}
+.dim.center{align-items:center}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.sheet{background:#fff;width:100%;border-radius:20px 20px 0 0;padding:20px 18px 28px;animation:up .25s ease}
+@keyframes up{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
+.sheet h3{font:700 18px/1.4 Pretendard;color:var(--g900);margin-bottom:14px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts button{display:flex;align-items:center;justify-content:space-between;padding:14px 12px;border-radius:10px;font:500 15px/1.4 Pretendard;color:var(--g700);text-align:left}
+.opts button.on{background:var(--g100);color:var(--teal-60);font-weight:600}
+.opts button.on::after{content:"✓";font-weight:700}
+
+/* 캘린더 (피그마 calendar 컴포넌트) */
+.cal{background:#fff;border-radius:16px;padding:20px 18px 16px;width:324px}
+.cal .top{display:flex;align-items:center;margin-bottom:22px}
+.cal .top b{flex:1;font:700 20px/1.4 Pretendard;color:var(--g900)}
+.cal .nav{width:32px;height:32px;border-radius:8px;background:var(--g100);display:flex;align-items:center;justify-content:center;margin-left:6px;color:var(--g400);font-size:18px}
+.cal .grid{display:grid;grid-template-columns:repeat(7,1fr);row-gap:4px;text-align:center}
+.cal .wd{font:500 12px/1 Pretendard;color:var(--g500);padding-bottom:12px}
+.cal .wd.sun{color:var(--coral-60)} .cal .wd.sat{color:var(--teal-60)}
+.cal .d{height:36px;width:40px;margin:0 auto;border-radius:8px;font:600 16px/36px Pretendard;color:var(--g500);position:relative}
+.cal .d.has::after{content:"";position:absolute;left:50%;bottom:3px;width:4px;height:4px;border-radius:50%;background:var(--teal-60);transform:translateX(-50%)}
+.cal .d.haserr::after{background:var(--coral-60)}
+.cal .d.sel{background:var(--teal-60);color:#fff}
+.cal .d.sel::after{background:#fff}
+.cal .d.today:not(.sel){color:var(--teal-60)}
+.cal .d.future{color:var(--g300);cursor:default}
+.cal .d:not(.future):not(.sel):hover{background:var(--g100)}
+
+/* 카메라 */
+#camera{background:#000;color:#fff}
+/* 카메라 영상은 화면 전체, 위아래 바는 50% 검정으로 덮음 */
+.feed{position:absolute;inset:0;overflow:hidden;background:var(--g800);z-index:0}
+.feed video{position:absolute;left:50%;top:50%;width:640px;height:640px;object-fit:cover;transform:translate(-50%,-50%) rotate(-90deg);opacity:0;transition:opacity .4s}
+.feed video.live{opacity:1}
+.camhead,.cambottom{position:relative;z-index:5;background:rgba(0,0,0,.5)}
+.cambottom{height:44px;flex:none}
+.camhead{height:48px;flex:none;display:flex;align-items:center;padding:0 16px;gap:8px}
+.camhead .info{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px}
+.camhead .title{flex:1;display:flex;justify-content:center;gap:12px;font:700 20px/1.4 Pretendard}
+.camhead .title .a{color:var(--g300)} .camhead .title .b{color:var(--g100);font-variant-numeric:tabular-nums}
+.camhead .close{width:36px;height:36px;border-radius:8px;background:var(--g800);display:flex;align-items:center;justify-content:center}
+.camhead img{width:24px;height:24px}
+.viewport-wrap{flex:1;display:flex;position:relative;z-index:4}
+.viewport{flex:1;position:relative;border:1px solid var(--g300);display:flex;flex-direction:column;align-items:center;padding:8px 0}
+.corner{position:absolute;width:24px;height:24px;border:0 solid var(--g200);z-index:3}
+.corner.tl{left:-1px;top:-1px;border-left-width:5px;border-top-width:5px}
+.corner.tr{right:-1px;top:-1px;border-right-width:5px;border-top-width:5px}
+.corner.bl{left:-1px;bottom:-1px;border-left-width:5px;border-bottom-width:5px}
+.corner.br{right:-1px;bottom:-1px;border-right-width:5px;border-bottom-width:5px}
+.toast{position:relative;z-index:3;background:rgba(0,0,0,.9);border:1px solid var(--g800);border-radius:8px;padding:4px 12px;font:500 14px/1.429 Pretendard;color:var(--g200);letter-spacing:.2px}
+.rec{position:absolute;left:14px;top:12px;z-index:3;display:none;align-items:center;gap:6px;font:600 12px/1 Pretendard;color:#fff;background:rgba(0,0,0,.5);padding:5px 8px;border-radius:6px}
+.rec i{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:blink 1s infinite}
+.rec.on{display:flex}
+@keyframes blink{50%{opacity:.25}}
+.shoot{position:relative;z-index:3;margin-top:auto;width:200px}
+.modal{background:#faf9f6;border-radius:16px;padding:20px;width:448px;color:var(--g900)}
+.modal h3{font:700 20px/1.4 Pretendard;margin-bottom:16px}
+.modal p{font:400 15px/1.6 Pretendard;color:var(--g700);margin-bottom:16px}
+.modal .stack{display:flex;flex-direction:column;gap:4px}
+.modal .stack .btn{border:1px solid var(--g700);background:#fff;color:var(--g700);font-weight:400}
+.modal ol{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.modal li{display:flex;align-items:center;gap:10px;font:400 15px/1.6 Pretendard;color:var(--g700)}
+.modal li i{width:20px;height:20px;border-radius:5px;background:var(--g900);color:#fff;font:600 13px/20px Pretendard;text-align:center;font-style:normal;flex:none}
+.modal.port{width:300px}
+/* 안드로이드 시스템 권한 창 (Material 3) */
+.sysdim{background:rgba(0,0,0,.32)}
+.sysdlg{width:312px;background:#eceff3;border-radius:28px;padding:20px 20px 18px;display:flex;flex-direction:column;align-items:center;font-family:Roboto,'Noto Sans KR',Pretendard,sans-serif;color:#191c20;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:sysin .2s ease}
+@keyframes sysin{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+.sysic{color:#3a5f7f;margin-bottom:12px}
+.systxt{word-break:keep-all;font-size:16px;line-height:1.45;text-align:center;letter-spacing:-.1px;margin-bottom:16px;padding:0 4px}
+.systxt b{font-weight:700}
+.sysbtns{width:100%;display:flex;flex-direction:column;gap:3px}
+.sysbtns button{height:44px;background:#d5e0ea;color:#0f1d29;font-size:14px;font-weight:500;border-radius:5px;letter-spacing:.1px}
+.sysbtns button:first-child{border-radius:20px 20px 5px 5px}
+.sysbtns button:last-child{border-radius:5px 5px 20px 20px}
+.sysbtns button:active{background:#c4d2df}
+.field{width:100%;height:44px;border:1px solid var(--g300);border-radius:8px;padding:0 12px;font:400 15px Pretendard;color:var(--g700);margin-bottom:16px;background:#fff}
+.row2{display:flex;gap:8px}
+
+/* 분석 로딩 */
+#loading{background:var(--g150);align-items:center;justify-content:center}
+/* 로딩 애니메이션 (loading_animation/preview.html 최신본) */
+#loading{--ld-scan:4.4s;--ld-ease:cubic-bezier(.45,0,.4,1)}
+.ld-scene{position:relative;width:150px;height:184px;margin-bottom:44px;flex:none}
+.ld-bracket{position:absolute;width:16px;height:16px;border:2.5px solid var(--g300);animation:ldFrame var(--ld-scan) ease-in-out infinite}
+.ld-bracket.tl{top:-12px;left:-12px;border-right:0;border-bottom:0;border-top-left-radius:6px;--dx:-3px;--dy:-3px}
+.ld-bracket.tr{top:-12px;right:-12px;border-left:0;border-bottom:0;border-top-right-radius:6px;--dx:3px;--dy:-3px}
+.ld-bracket.bl{bottom:-12px;left:-12px;border-right:0;border-top:0;border-bottom-left-radius:6px;--dx:-3px;--dy:3px}
+.ld-bracket.br{bottom:-12px;right:-12px;border-left:0;border-top:0;border-bottom-right-radius:6px;--dx:3px;--dy:3px}
+@keyframes ldFrame{0%,100%{transform:translate(0,0)}50%{transform:translate(var(--dx),var(--dy))}}
+.ld-card{position:absolute;inset:0;background:#fff;border:2.5px solid var(--g200);border-radius:16px;overflow:hidden}
+.ld-seal{position:absolute;left:18px;right:18px;top:22px;height:5px;border-radius:3px;background:var(--g200)}
+.ld-pills{position:absolute;inset:0}
+.ld-pill{position:absolute;border-radius:999px}
+.ld-pill.p1{width:58px;height:21px;left:22px;top:58px;transform:rotate(-28deg)}
+.ld-pill.p2{width:46px;height:17px;left:80px;top:100px;transform:rotate(24deg)}
+.ld-pill.p3{width:30px;height:30px;left:48px;top:132px;border-radius:50%}
+.ld-gray .p1,.ld-gray .p2{background:linear-gradient(90deg,var(--g200) 50%,var(--g300) 50%)}
+.ld-gray .p3{background:var(--g300)}
+.ld-color .p1{background:linear-gradient(90deg,#BEE4E5 50%,var(--teal-60) 50%)}
+.ld-color .p2{background:linear-gradient(90deg,#FFD9D3 50%,var(--coral-60) 50%)}
+.ld-color .p3{background:#9CD3D5}
+.ld-pill.p3::after{content:"";position:absolute;left:6px;right:6px;top:14px;height:2px;border-radius:1px;background:rgba(255,255,255,.7);transform:rotate(-20deg)}
+.ld-pills.ld-color{animation:ldReveal var(--ld-scan) var(--ld-ease) infinite}
+@keyframes ldReveal{0%{clip-path:inset(0 0 100% 0)}45%,50%{clip-path:inset(0 0 0 0)}95%,100%{clip-path:inset(0 0 100% 0)}}
+.ld-scanline{position:absolute;left:-8px;right:-8px;top:0;height:2px;border-radius:1px;z-index:1;background:var(--teal-60);box-shadow:0 0 10px 2px rgba(10,160,165,.4);animation:ldScan var(--ld-scan) var(--ld-ease) infinite}
+@keyframes ldScan{0%{transform:translateY(0)}45%,50%{transform:translateY(182px)}95%,100%{transform:translateY(0)}}
+.ld-scanline::before,.ld-scanline::after{content:"";position:absolute;left:0;right:0;height:36px}
+.ld-scanline::before{bottom:2px;background:linear-gradient(to top,rgba(10,160,165,.16),rgba(10,160,165,0));animation:ldTrailDown var(--ld-scan) linear infinite}
+.ld-scanline::after{top:2px;background:linear-gradient(to bottom,rgba(10,160,165,.16),rgba(10,160,165,0));animation:ldTrailUp var(--ld-scan) linear infinite}
+@keyframes ldTrailDown{0%,42%{opacity:1}48%,97%{opacity:0}100%{opacity:1}}
+@keyframes ldTrailUp{0%,47%{opacity:0}53%,92%{opacity:1}98%,100%{opacity:0}}
+#loading h2{font:700 20px/1.4 Pretendard;color:var(--g700)}
+#loading .sub{font:400 15px/1.6 Pretendard;color:var(--g400);letter-spacing:-.3px;margin-top:6px}
+#loading .steps{display:flex;flex-direction:column;gap:8px;width:232px;margin-top:44px}
+#loading .step{background:var(--g50);border-radius:12px;padding:12px;display:flex;align-items:center;gap:6px;font:400 15px/1.6 Pretendard;color:var(--g600);letter-spacing:-.3px}
+#loading .step .spin{width:23px;height:24px;position:relative;overflow:hidden;flex:none}
+#loading .step .spin img{position:absolute;height:146.15%;left:-12%;top:-30.77%;width:128%}
+#loading .step.run .spin{animation:rot 1s linear infinite}
+#loading .step .ok{width:24px;height:24px;display:none;flex:none}
+#loading .step.done .spin{display:none}
+#loading .step.done .ok{display:block;animation:pop .3s ease}
+@keyframes rot{to{transform:rotate(360deg)}}
+@keyframes pop{from{transform:scale(.4)}to{transform:none}}
+
+/* 상세 */
+#detail{background:var(--g150)}
+#detail .bar{flex:none;background:var(--teal-60);color:#fff;transition:background .2s,box-shadow .2s;position:relative;z-index:3}
+#detail .bar.scrolled{box-shadow:0 2px 10px rgba(15,23,42,.14)}
+/* 헤더 아래에서 카드가 잘려 보이지 않도록 배경색으로 서서히 가림 */
+.scroll-fade{position:sticky;top:0;height:24px;margin-bottom:-24px;z-index:2;pointer-events:none;background:linear-gradient(var(--g150) 20%,rgba(239,244,249,0));opacity:0;transition:opacity .2s}
+.scroll-fade.on{opacity:0}
+#detail.err .bar{background:var(--coral-60)}
+#detail.fail .bar{background:var(--g500)}
+#detail .bar .head{padding:0 20px 0 16px}
+#detail .bar h1{color:var(--g50);text-align:center;margin-right:32px}
+.bagtitle{padding:24px 20px 12px;gap:6px;font:600 18px/1.5 Pretendard;letter-spacing:-.2826px;color:var(--g700)}
+.bagtitle span{flex:none} .bagtitle em{flex:1;font-style:normal;color:var(--g400)}
+.sum{display:flex;gap:8px}
+.sum .box{flex:1;background:#fff;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:2px}
+.sum .lab{font:600 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.3px}
+.sum .val{font:600 20px/1.4 Pretendard;letter-spacing:-.44px;color:var(--g600);display:flex;gap:2px}
+.sum .val .ok{color:var(--teal-60)} .sum .val .err{color:var(--coral-60)} .sum .val .fail{color:var(--g500)}
+.player{position:relative;aspect-ratio:435/287;border:1px solid var(--g300);border-radius:12px;overflow:hidden;background:var(--g800)}
+.player video{position:absolute;left:50%;top:50%;width:320px;height:320px;object-fit:cover;transform:translate(-50%,-50%) rotate(-90deg)}
+.flash{position:absolute;inset:0;pointer-events:none;opacity:0;background:rgba(var(--alert),.35);box-shadow:inset 0 0 0 3px rgba(var(--alert),.9);z-index:2}
+.flash.on{animation:alertblink .55s ease-in-out infinite alternate}
+@keyframes alertblink{from{opacity:.15}to{opacity:1}}
+.player .tag{position:absolute;left:10px;top:10px;z-index:3;display:none;align-items:center;gap:6px;background:rgba(var(--alert),.92);color:#fff;font:600 12px/1 Pretendard;padding:6px 8px;border-radius:6px}
+.player .tag.on{display:flex}
+.player .ctrl{position:absolute;left:0;right:0;bottom:0;z-index:3;display:flex;align-items:center;gap:8px;padding:8px 10px;background:linear-gradient(transparent,rgba(0,0,0,.55))}
+.player .ctrl button{color:#fff;width:24px;height:24px;font-size:14px;display:flex;align-items:center;justify-content:center}
+.track{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.35);position:relative;cursor:pointer}
+.track .fill{position:absolute;left:0;top:0;bottom:0;background:#fff;border-radius:2px}
+.track .mark{position:absolute;top:-2px;height:8px;border-radius:2px;background:rgb(var(--alert))}
+.player .full{font-size:16px}
+.when{background:#fff;border-radius:12px;height:48px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;font:400 14px/1.571 Pretendard;letter-spacing:-.28px}
+.when span:first-child{font:600 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.3px} .when span:last-child{color:var(--g700);white-space:pre}
+.bags{display:flex;flex-direction:column;gap:8px;padding:0 20px 20px}
+.bag{background:#fff;border:1px solid transparent;border-radius:12px;height:48px;padding:0 16px;display:flex;align-items:center;gap:8px;text-align:left;width:100%;transition:background .2s,border-color .2s}
+.bag .n{flex:1;font:600 14px/1.429 Pretendard;color:var(--g700);letter-spacing:-.3px}
+.bag .why{display:block;font:500 13px/1.385 Pretendard;letter-spacing:.25px}
+.bag.errbag{height:60px;background:#fff7f6;border-color:#faaca2}
+.bag.errbag .why{color:var(--coral-60)}
+.bag.failbag{height:56px;background:var(--g50);border-color:var(--g400)}
+.bag.failbag .why{color:var(--g400)}
+.bag.live{background:#ffeceb;border-color:var(--coral-60)}
+.patient{background:#fff;border-radius:12px;overflow:hidden}
+.phead{width:100%;height:52px;padding:0 12px 0 16px;display:flex;align-items:center;gap:8px;text-align:left}
+.phead .pname{font:600 15px/1.467 Pretendard;color:var(--g700);letter-spacing:-.15px}
+.sico{flex:none} .sico.ok circle:first-child{fill:var(--teal-60)} .sico.err circle:first-child{fill:var(--coral-60)} .sico.fail circle:first-child{fill:var(--g400)}
+.phead .pava{width:32px;height:32px;border-radius:50%;flex:none;object-fit:cover}
+.phead .ptxt{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.phead .chev{width:20px;height:20px;transform:rotate(90deg);transition:transform .2s}
+.patient.open .phead .chev{transform:rotate(-90deg)}
+.pbody{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}
+.patient.open .pbody{grid-template-rows:1fr}
+.pbody > div{overflow:hidden;display:flex;flex-direction:column;gap:8px;padding:0 12px}
+.patient.open .pbody > div{padding-bottom:12px}
+.patient .bag:not(.errbag):not(.failbag):not(.live){background:var(--g100)}
+.hint{font:400 12px/1.5 Pretendard;color:var(--g400);padding:0 2px}
+
+/* 크게 보기 (가로) */
+#replay{background:#000;color:#fff}
+#replay .viewport{border-color:var(--g600)}
+#replay .vflash{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;background:rgba(var(--alert),.32);box-shadow:inset 0 0 0 4px rgba(var(--alert),.95),inset 0 0 60px rgba(var(--alert),.7)}
+#replay .vflash.on{animation:alertblink .55s ease-in-out infinite alternate}
+#replay .screenflash{position:absolute;inset:0;pointer-events:none;z-index:20;opacity:0;background:rgba(var(--alert),.12)}
+#replay .screenflash.on{animation:alertblink .55s ease-in-out infinite alternate}
+#replay .alertmsg{position:relative;z-index:3;display:none;align-items:center;gap:8px;background:rgb(var(--alert));color:#fff;font:600 14px/1.4 Pretendard;padding:6px 12px;border-radius:8px}
+#replay .alertmsg.on{display:flex}
+#replay .ctrl{position:relative;z-index:3;margin-top:auto;width:92%;display:flex;align-items:center;gap:10px}
+#replay .ctrl button{color:#fff;font-size:16px;width:28px;height:28px}
+
+/* 오류 통계 · 설정 */
+#stats,#settings{background:var(--g150)}
+.backhead{height:48px;flex:none;display:flex;align-items:center;gap:8px;padding:0 20px 0 16px;background:#fff}
+.backhead h1{flex:1;font:700 20px/1.4 Pretendard;color:var(--g900)}
+.backhead button img{filter:invert(1) brightness(.2)}
+.statgrid{display:flex;gap:8px;padding:0 20px}
+.statgrid .box{flex:1;background:#fff;border-radius:12px;padding:14px 16px}
+.statgrid .lab{font:600 13px/1.4 Pretendard;color:var(--g400)}
+.statgrid .val{font:700 20px/1.4 Pretendard;color:var(--g700)}
+.statgrid .val.err{color:var(--coral-70)}
+.setlist{background:#fff;border-radius:12px;margin:12px 20px;overflow:hidden}
+.setlist button{display:flex;width:100%;align-items:center;justify-content:space-between;padding:16px;font:500 15px/1.4 Pretendard;color:var(--g700);text-align:left;border-bottom:1px solid var(--g150)}
+.setlist button:last-child{border-bottom:0}
+.setlist small{font:400 13px Pretendard;color:var(--g400)}
+
+/* 화면 이동 메뉴 */
+.jump{position:fixed;right:16px;top:16px;background:#fff;border-radius:12px;padding:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);font:500 12px/1.4 Pretendard;color:var(--g600);display:flex;flex-direction:column;gap:2px;max-width:170px}
+.jump b{font:700 12px Pretendard;color:var(--g800);padding:2px 6px 6px}
+.jump button{text-align:left;padding:5px 6px;border-radius:6px}
+.jump button:hover{background:var(--g100)}
+@media (max-width:900px){.jump{display:none}}
+</style>
+</head>
+<body>
+<div class="stage"><div class="device" id="device">
+
+  <!-- 스플래시 -->
+  <section class="screen" id="splash">
+    <div class="status"><span class="clock">12:30</span><img src="assets/status_right.svg" alt=""></div>
+    <div class="center" id="splashBody"></div>
+  </section>
+
+  <!-- 온보딩 -->
+  <section class="screen" id="onboarding">
+    <div class="top">
+      <div class="status"><span class="clock">12:30</span><img src="assets/status_right.svg" alt=""></div>
+      <div class="body">
+        <div class="ill" id="onbAnim" aria-hidden="true"></div>
+        <h2 id="onbTitle">검사 시작하기</h2>
+        <img class="dots" id="onbDots" src="assets/dots1.svg" alt="">
+      </div>
+    </div>
+    <div class="foot">
+      <button class="btn primary tap" id="onbNext">다음</button>
+      <button class="btn ghost tap" id="onbSkip">건너뛰기</button>
+    </div>
+  </section>
+
+  <!-- 홈 -->
+  <section class="screen" id="home">
+    <div class="scroll">
+      <div class="hero">
+        <div class="pills" aria-hidden="true">
+          <svg width="0" height="0" style="position:absolute">
+            <defs>
+              <!-- 참고 이미지 톤: 채도 낮은 민트 + 매트한 질감 + 부드러운 음영 -->
+              <filter id="soft" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="1.6"/></filter>
+              <linearGradient id="capMint" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#a6ece5"/><stop offset=".45" stop-color="#6ad3cc"/><stop offset="1" stop-color="#46b7b2"/></linearGradient>
+              <linearGradient id="capWhite" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#f0fbfa"/><stop offset="1" stop-color="#d0eeeb"/></linearGradient>
+              <linearGradient id="capShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a9a99" stop-opacity=".12"/><stop offset=".25" stop-color="#2a9a99" stop-opacity="0"/><stop offset=".8" stop-color="#2a9a99" stop-opacity="0"/><stop offset="1" stop-color="#2a9a99" stop-opacity=".09"/></linearGradient>
+              <linearGradient id="tabTop" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#e4f6f5"/><stop offset="1" stop-color="#a9dedb"/></linearGradient>
+              <linearGradient id="tabSide" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8dcd8"/><stop offset="1" stop-color="#6cbcb9"/></linearGradient>
+              <!-- 캡슐: 왼쪽 위 조명 + 윗면 하이라이트 + 아래 반사광 + 중심 그림자 -->
+              <clipPath id="capClip"><path d="M15 1h42a13 13 0 0 1 0 26H15a13 13 0 0 1 0-26z"/></clipPath>
+              <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="4" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 .1  0 0 0 0 .35  0 0 0 0 .38  0 0 0 .14 0"/></filter>
+              <filter id="soft1" x="-20%" y="-80%" width="140%" height="260%"><feGaussianBlur stdDeviation=".7"/></filter>
+              <linearGradient id="capCore" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset=".5" stop-color="#ffffff" stop-opacity="0"/><stop offset=".76" stop-color="#2a9a99" stop-opacity=".12"/><stop offset=".9" stop-color="#2a9a99" stop-opacity=".06"/><stop offset="1" stop-color="#ffffff" stop-opacity=".45"/></linearGradient>
+              <symbol id="capsule" viewBox="0 0 72 28">
+                <g clip-path="url(#capClip)">
+                  <rect x="0" y="0" width="36" height="28" fill="url(#capMint)"/>
+                  <rect x="36" y="0" width="36" height="28" fill="url(#capWhite)"/>
+                  <rect x="0" y="0" width="72" height="28" fill="url(#capCore)"/>
+                  <rect x="0" y="0" width="72" height="28" fill="url(#capShade)"/>
+                  <rect x="34.6" y="0" width="1.6" height="28" fill="#2a9a99" opacity=".1"/>
+                  <rect x="36.4" y="0" width=".9" height="28" fill="#ffffff" opacity=".7"/>
+                  <rect x="12" y="22.8" width="48" height="2.2" rx="1.1" fill="#ffffff" opacity=".32" filter="url(#soft)"/>
+                  <rect x="0" y="0" width="72" height="28" filter="url(#grain)" opacity=".5"/>
+                </g>
+              </symbol>
+              <symbol id="tablet" viewBox="0 0 44 36">
+                <ellipse cx="22" cy="20.5" rx="20" ry="13" fill="url(#tabSide)"/>
+                <ellipse cx="22" cy="16.5" rx="20" ry="13" fill="url(#tabTop)"/>
+                <path d="M9 21 L35 12" stroke="#b3dcd6" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M9 22 L35 13" stroke="#ffffff" stroke-width="1" stroke-linecap="round" opacity=".8"/>
+                <ellipse cx="15" cy="10" rx="8" ry="3" fill="#ffffff" opacity=".7" filter="url(#soft)"/>
+              </symbol>
+            </defs>
+          </svg>
+          <!-- 민트 빛 포인트 -->
+          <i class="glow" style="left:-25.00%;top:-60px;width:77.78cqw;height:58.33cqw"></i>
+          <i class="glow" style="left:69.44%;top:150px;width:47.22cqw;height:47.22cqw;animation-delay:-2s;animation-duration:7s"></i>
+          <i class="glow" style="left:-16.67%;top:170px;width:38.89cqw;height:38.89cqw;animation-delay:-4s"></i>
+          <i class="glow" style="left:63.89%;top:-50px;width:55.56cqw;height:44.44cqw;animation-delay:-3s;animation-duration:8s;opacity:.7"></i>
+          <i class="glow" style="left:33.33%;top:190px;width:41.67cqw;height:36.11cqw;animation-delay:-1s;animation-duration:7s"></i>
+          <!-- 원본 배경 사진에서 오려 낸 알약 (조명·반사광·그림자 원본 그대로) -->
+          <!-- 위쪽 알약: 아래로 내려왔다 올라감 (위치=화면 너비 %, 크기=너비 비율) -->
+          <div class="pill down" style="left:71.67%;top:46px;width:25.00cqw"><img src="assets/pill_capFull.png" alt="" style="transform:rotate(-24deg)"></div>
+          <div class="pill down far soft" style="left:50.00%;top:58px;width:12.78cqw;animation-delay:-.6s"><img src="assets/pill_tabBR.png" alt="" style="transform:scaleX(-1) rotate(-22deg)"></div>
+          <div class="pill down" style="left:-5.00%;top:90px;width:17.78cqw;animation-delay:-1.2s"><img src="assets/pill_capFull.png" alt="" style="transform:rotate(26deg)"></div>
+          <!-- 아래쪽 알약: 위로 올라왔다 내려감 -->
+          <div class="pill up" style="left:16.11%;top:252px;width:14.44cqw;animation-delay:-.4s"><img src="assets/pill_tabBR.png" alt="" style="transform:rotate(-24deg)"></div>
+          <div class="pill up" style="left:81.11%;top:252px;width:20.00cqw;animation-delay:-1s"><img src="assets/pill_capFull.png" alt="" style="transform:rotate(152deg)"></div>
+        </div>
+        <div class="status"><span class="clock">12:30</span><img src="assets/status_right.svg" alt=""></div>
+        <div class="brand">Pilter</div>
+        <div class="cards">
+          <button class="card tap" data-go="camera"><span>검사 시작</span><div class="ico"><img src="assets/ic_start2.png" alt="" style="left:0;top:0;width:100%;height:100%"></div></button>
+          <button class="card tap" data-tab="history"><span>오류 통계</span><div class="ico"><img src="assets/ic_stats2.png" alt="" style="left:0;top:0;width:100%;height:100%"></div></button>
+        </div>
+      </div>
+      <div class="sec-title"><span>최근 검사 내역</span><button data-tab="history" aria-label="검사 내역 전체 보기"><img src="assets/chevron_right.svg" alt=""></button></div>
+      <div class="rlist" id="recent" style="padding-bottom:20px"></div>
+    </div>
+    <div class="tabbar"></div>
+  </section>
+
+  <!-- 검사 내역 -->
+  <section class="screen" id="history">
+    <div class="status"><span class="clock">12:30</span><img src="assets/status_right.svg" alt=""></div>
+    <div class="head"><h1>검사 내역</h1><button class="icbtn" id="filterBtn" aria-label="필터"><img src="assets/ic_filter.svg" alt="" style="width:22px;height:22px"></button></div>
+    <div class="datebar">
+      <button id="dateBtn"><span id="dateLabel"></span><img src="assets/ic_calendar.svg" alt=""></button>
+      <span class="chip" id="filterChip" style="display:none"></span>
+      <button class="today" id="todayBtn" style="display:none">오늘</button>
+    </div>
+    <div class="scroll"><div class="rlist" id="histList" style="padding-top:2px"></div></div>
+    <div class="tabbar"></div>
+  </section>
+
+  <!-- 설정 -->
+  <section class="screen" id="settings">
+    <div class="status"><span class="clock">12:30</span><img src="assets/status_right.svg" alt=""></div>
+    <div class="head" style="background:var(--g150)"><h1>설정</h1></div>
+    <div class="scroll">
+      <div class="setlist">
+        <button id="serverBtn"><span>서버 주소</span><small id="serverVal">https://xxxx.ngrok-free.app</small></button>
+        <button id="guideAgain"><span>사용 방법 다시 보기</span><small>›</small></button>
+      </div>
+      <div class="setlist"><button disabled><span>앱 버전</span><small>1.0.0 (프로토타입)</small></button></div>
+    </div>
+    <div class="tabbar"></div>
+  </section>
+
+  <!-- 오류 통계 -->
+  <section class="screen" id="stats">
+    <div class="status"><span class="clock">12:30</span><img src="assets/status_right.svg" alt=""></div>
+    <div class="backhead"><button data-back aria-label="뒤로"><img src="assets/chevron_left.svg" alt=""></button><h1>오류 통계</h1></div>
+    <div class="scroll">
+      <div style="display:flex;justify-content:center;padding:16px 0 12px"><div class="cal" id="statsCal"></div></div>
+      <div class="statgrid" id="statsSum"></div>
+      <div class="sec-title" style="padding-top:20px"><span id="statsListTitle">이 날짜의 오류</span></div>
+      <div class="rlist" id="statsList"></div>
+    </div>
+  </section>
+
+  <!-- 카메라 (가로) -->
+  <section class="screen" id="camera">
+    <div class="feed"><video id="camVideo" src="assets/inspect.mp4" muted playsinline preload="auto"></video></div>
+    <div class="camhead">
+      <button class="info" id="camInfo" aria-label="촬영 가이드"><img src="assets/ic_info.svg" alt=""></button>
+      <div class="title"><span class="a" id="camState">검사 중</span><span class="b" id="camTimer">00:00</span></div>
+      <button class="close" id="camClose" aria-label="닫기"><img src="assets/ic_x.svg" alt=""></button>
+    </div>
+    <div class="viewport-wrap">
+      <div class="viewport">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div class="toast" id="camToast">인식 중..</div>
+        <button class="btn primary shoot tap" id="shootBtn">촬영 종료</button>
+      </div>
+    </div>
+    <div class="cambottom"></div>
+    <div class="dim center sysdim" id="permDim"><div class="sysdlg" role="dialog" aria-label="카메라 권한 확인">
+      <svg class="sysic" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9.4 4 7.6 6H4.5A2.5 2.5 0 0 0 2 8.5v10A2.5 2.5 0 0 0 4.5 21h15a2.5 2.5 0 0 0 2.5-2.5v-10A2.5 2.5 0 0 0 19.5 6h-3.1l-1.8-2H9.4ZM12 9a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Zm0 2a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z"/></svg>
+      <p class="systxt"><b>필터(Pilter)</b>에서 사진 및 동영상을 촬영하도록 허용할까요?</p>
+      <div class="sysbtns">
+        <button data-perm="allow">앱 사용 중에만 허용</button>
+        <button data-perm="deny">허용 안 함</button>
+        <button data-perm="once">이번만 허용</button>
+      </div>
+    </div></div>
+    <div class="dim center" id="guideDim"><div class="modal">
+      <h3>촬영 가이드</h3>
+      <ol>
+        <li><i>1</i>약봉지 1개가 모두 보이도록 가이드 영역 안에 맞춰 주세요.</li>
+        <li><i>2</i>흔들리지 않게 촬영해 주세요.</li>
+        <li><i>3</i>밝은 곳에서 촬영해 주세요.</li>
+      </ol>
+      <button class="btn primary tap" id="guideOk">확인</button>
+    </div></div>
+    <div class="dim center" id="denyDim"><div class="modal">
+      <h3>카메라를 쓸 수 없어요</h3>
+      <p>검사하려면 카메라 권한이 필요해요. 설정에서 권한을 허용해 주세요.</p>
+      <div class="row2"><button class="btn line tap" id="denyHome">홈으로</button><button class="btn primary tap" id="denyRetry">다시 요청</button></div>
+    </div></div>
+  </section>
+
+  <!-- 분석 로딩 -->
+  <section class="screen" id="loading">
+    <div class="ld-scene" aria-hidden="true">
+      <span class="ld-bracket tl"></span><span class="ld-bracket tr"></span>
+      <span class="ld-bracket bl"></span><span class="ld-bracket br"></span>
+      <div class="ld-card">
+        <div class="ld-seal"></div>
+        <div class="ld-pills ld-gray"><span class="ld-pill p1"></span><span class="ld-pill p2"></span><span class="ld-pill p3"></span></div>
+        <div class="ld-pills ld-color"><span class="ld-pill p1"></span><span class="ld-pill p2"></span><span class="ld-pill p3"></span></div>
+      </div>
+      <div class="ld-scanline"></div>
+    </div>
+    <h2>영상을 분석하고 있어요</h2>
+    <p class="sub">잠시만 기다려주세요</p>
+    <div class="steps" id="steps"></div>
+  </section>
+
+  <!-- 검사 상세 -->
+  <section class="screen" id="detail">
+    <div class="bar">
+      <div class="status white"><span class="clock">12:30</span><img src="assets/status_right_white.svg" alt=""></div>
+      <div class="head"><button data-back aria-label="뒤로"><img src="assets/chevron_left.svg" alt="" style="width:24px;height:24px;display:block"></button><h1 id="dTitle">검사 상세</h1></div>
+    </div>
+    <div class="scroll" id="detailScroll"><div class="scroll-fade" id="dFade"></div>
+      <div style="display:flex;flex-direction:column;gap:8px;padding:20px">
+        <div class="sum" id="dSum"></div>
+        <div class="player" id="player">
+          <video id="pVideo" src="assets/inspect.mp4" muted playsinline preload="auto"></video>
+          <div class="flash" id="pFlash"></div>
+          <div class="tag" id="pTag"></div>
+          <div class="ctrl">
+            <button id="pPlay" aria-label="재생">▶</button>
+            <div class="track" id="pTrack"><div class="fill" id="pFill"></div></div>
+            <button class="full" id="pFull" aria-label="크게 보기">⤢</button>
+          </div>
+        </div>
+        <div class="when"><span>검사일</span><span id="dWhen"></span></div>
+      </div>
+      <div class="sec-title bagtitle"><span id="dBagTitle">포장별 검사 결과</span><em id="dBagCount"></em></div>
+      <div class="bags" id="dBags"></div>
+    </div>
+  </section>
+
+  <!-- 결과 크게 보기 (가로) -->
+  <section class="screen" id="replay">
+    <div class="screenflash" id="rScreen"></div>
+    <div class="feed"><video id="rVideo" class="live" src="assets/inspect.mp4" muted playsinline preload="auto"></video><div class="vflash" id="rFlash"></div></div>
+    <div class="camhead">
+      <span style="width:36px"></span>
+      <div class="title"><span class="a">다시보기</span><span class="b" id="rTime">00:00</span></div>
+      <button class="close" id="rClose" aria-label="닫기"><img src="assets/ic_x.svg" alt=""></button>
+    </div>
+    <div class="viewport-wrap">
+      <div class="viewport">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div class="alertmsg" id="rMsg"></div>
+        <div class="ctrl">
+          <button id="rPlay" aria-label="재생">❚❚</button>
+          <div class="track" id="rTrack"><div class="fill" id="rFill"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cambottom"></div>
+  </section>
+
+  <!-- 공용 시트 -->
+  <div class="dim" id="sheetDim"><div class="sheet" id="sheet"></div></div>
+  <div class="dim center" id="calDim"><div class="cal" id="histCal"></div></div>
+  <div class="dim center" id="serverDim"><div class="modal port">
+    <h3>서버 주소</h3>
+    <input class="field" id="serverInput" value="https://xxxx.ngrok-free.app">
+    <div class="row2"><button class="btn line tap" id="serverCancel">취소</button><button class="btn primary tap" id="serverSave">저장</button></div>
+  </div></div>
+</div></div>
+
+<nav class="jump">
+  <b>기기 너비</b>
+  <button data-dw="360">360 × 640 (최소)</button>
+  <button data-dw="412">412 × 915 (최대)</button>
+  <b style="padding-top:8px">화면 바로가기</b>
+  <button data-jump="splash">스플래시</button>
+  <button data-jump="onboarding">온보딩</button>
+  <button data-jump="home">홈</button>
+  <button data-jump="history">검사 내역</button>
+  <button data-jump="camera">검사 (카메라)</button>
+  <button data-jump="detail-err">검사 상세 · 오류</button>
+  <button data-jump="detail-ok">검사 상세 · 정상</button>
+  <button data-jump="detail-fail">검사 상세 · 실패</button>
+  <button data-jump="stats">오류 통계</button>
+  <button data-jump="settings">설정</button>
+</nav>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+<script>
+/* ---------- 이상 구간 (영상 기준 초) : 실제 모델 결과가 오면 여기만 바꾸면 됨 ---------- */
+const ANOMALIES = [
+  { start: 6.6,  end: 8.6,  bag: 3, why: '알약 1알 부족' },
+  { start: 23.4, end: 25.6, bag: 9, why: '알약 1알 초과' },
+];
+const VIDEO_LEN = 31.8;
+const BAG_COUNT = 12;
+const bagTime = n => 1.2 + (n - 1) * 2.45; // 봉지별 대략적 등장 시점
+
+/* ---------- 날짜 ---------- */
+const WD = ['일','월','화','수','목','금','토'];
+const TODAY = new Date(); TODAY.setHours(0,0,0,0);
+const key = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const sameDay = (a,b) => key(a) === key(b);
+const longDate = d => `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 ${WD[d.getDay()]}요일`;
+const ampm = (h,m) => `${h<12?'오전':'오후'} ${h%12===0?12:h%12}:${String(m).padStart(2,'0')}`;
+
+/* ---------- 가짜 기록 ---------- */
+function seeded(n){ let s = n; return () => (s = (s*9301+49297)%233280)/233280; }
+function makeRecord(id, date, h, m, status){
+  const r = { id, date, h, m, status, total: BAG_COUNT, anomalies: [], failBags: [] };
+  if (status === 'err') r.anomalies = ANOMALIES.slice();
+  if (status === 'fail') r.failBags = [1];
+  return r;
+}
+const DB = {};
+(function seed(){
+  // 오늘: 피그마 검사 내역과 같은 구성 (최신이 위)
+  const t = [[12,30,'ok'],[12,30,'ok'],[12,23,'err'],[12,12,'ok'],[12,8,'fail'],[11,52,'ok'],[11,40,'ok'],[11,31,'ok']];
+  DB[key(TODAY)] = t.map((x,i)=>makeRecord(`t${i}`, TODAY, x[0], x[1], x[2]));
+  for (let back = 1; back <= 75; back++){
+    const d = new Date(TODAY); d.setDate(d.getDate()-back);
+    const rnd = seeded(back*7+3);
+    const dow = d.getDay();
+    const n = (dow===0) ? 0 : Math.floor(rnd()*7);
+    const list = [];
+    let h = 9, m = 10;
+    for (let i=0;i<n;i++){
+      m += 10 + Math.floor(rnd()*40); while (m>=60){m-=60;h++;}
+      const p = rnd();
+      list.push(makeRecord(`${key(d)}-${i}`, d, h, m, p<.14?'err':p<.22?'fail':'ok'));
+    }
+    DB[key(d)] = list.reverse();
+  }
+})();
+const recordsOf = d => DB[key(d)] || [];
+const findRecord = id => Object.values(DB).flat().find(r => r.id === id);
+const label = r => r.status==='ok' ? '검사 정상' : r.status==='err' ? `${r.anomalies.length}건 오류` : '복약 패턴 미감지';
+const badge = s => `<span class="badge ${s}">${s==='ok'?'정상':s==='err'?'오류':'실패'}</span>`;
+
+/* ---------- 라우팅 ---------- */
+const $ = s => document.querySelector(s);
+const device = $('#device');
+const LAND = ['camera','replay'];
+let current = null; const stack = [];
+function show(id, {push=true}={}){
+  if (current && push && current !== id) stack.push(current);
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
+  device.classList.toggle('land', LAND.includes(id));
+  if (current === 'camera' && id !== 'camera') stopCamera();
+  if (current === 'detail' && id !== 'detail') pVideo.pause();
+  if (current === 'replay' && id !== 'replay') rVideo.pause();
+  current = id;
+  ENTER[id] && ENTER[id]();
+  fit();
+}
+function back(){ const prev = stack.pop() || 'home'; show(prev, {push:false}); }
+function tab(id){ stack.length = 0; show(id, {push:false}); }
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]'); if (g) show(g.dataset.go);
+  const t = e.target.closest('[data-tab]'); if (t) tab(t.dataset.tab);
+  if (e.target.closest('[data-back]')) back();
+  const r = e.target.closest('[data-rec]'); if (r) openDetail(r.dataset.rec);
+});
+
+/* 화면 크기에 맞게 기기 축소 */
+function fit(){
+  const land = device.classList.contains('land');
+  const w = land ? 660 : device.offsetWidth + 20, h = land ? 380 : device.offsetHeight + 20;
+  const s = Math.min(1.25, (innerWidth-40)/w, (innerHeight-40)/h);
+  device.style.transform = `scale(${s})`;
+}
+addEventListener('resize', fit);
+
+/* 시계 */
+function tick(){ const n = new Date(); document.querySelectorAll('.clock').forEach(c => c.textContent = `${n.getHours()}:${String(n.getMinutes()).padStart(2,'0')}`); }
+tick(); setInterval(tick, 15000);
+
+/* 탭바 */
+function renderTabbar(active){
+  return `<div class="tabs">
+    <button data-tab="home" class="${active==='home'?'on':''}"><img src="assets/${active==='home'?'tab_home_on':'tab_home_off'}.svg" alt="">홈</button>
+    <button data-tab="history" class="${active==='history'?'on':''}"><img src="assets/${active==='history'?'tab_list_on':'tab_list_off'}.svg" alt="">검사 내역</button>
+    <button data-tab="settings" class="set ${active==='settings'?'on':''}"><img src="assets/tab_settings_off.svg" alt="">설정</button>
+  </div><div style="height:24px"></div>`;
+}
+
+/* ---------- 스플래시 · 온보딩 ---------- */
+let seenOnboarding = false;
+function runSplash(){
+  const b = $('#splashBody');
+  b.innerHTML = `<div class="copy fade">매일의 검수에<br><b>도움이 필요할 때</b></div>`;
+  setTimeout(()=>{ if(current!=='splash')return; b.innerHTML = `<img class="logo fade" src="assets/logo.png" alt=""><div class="word fade">Pilter</div>`; }, 1300);
+  setTimeout(()=>{ if(current!=='splash')return; show(seenOnboarding?'home':'onboarding', {push:false}); }, 2700);
+}
+const ONB = [['검사 시작하기','onboarding_1b','dots1','다음'],['촬영 가이드','onboarding_2a','dots2','다음'],['결과 확인','onboarding_3a','dots3','시작하기']];
+let onbIdx = 0, onbAnim = null;
+function renderOnb(){
+  const o = ONB[onbIdx]; $('#onbTitle').textContent=o[0]; $('#onbDots').src=`assets/${o[2]}.svg`; $('#onbNext').textContent=o[3];
+  const box = $('#onbAnim');
+  if (onbAnim) onbAnim.destroy();
+  box.classList.remove('swap'); void box.offsetWidth; box.classList.add('swap');
+  // 로티 무한 반복 (360x384 원본을 360x360 자리에 꽉 채움)
+  onbAnim = lottie.loadAnimation({ container: box, renderer: 'svg', loop: true, autoplay: true,
+    path: `assets/lottie/${o[1]}.json`, rendererSettings: { preserveAspectRatio: 'xMidYMid slice' } });
+}
+$('#onbNext').onclick = () => { if (onbIdx < 2){ onbIdx++; renderOnb(); } else finishOnb(); };
+$('#onbSkip').onclick = finishOnb;
+function finishOnb(){ seenOnboarding = true; stack.length=0; show('home',{push:false}); }
+
+/* ---------- 홈 ---------- */
+function relTime(r){
+  const now = new Date(); const t = new Date(r.date); t.setHours(r.h, r.m, r.s||0);
+  const diff = Math.round((now - t)/60000);
+  if (sameDay(r.date, TODAY) && diff >= 0 && diff < 60) return diff < 1 ? '방금 전' : `${diff}분 전`;
+  return ampm(r.h, r.m);
+}
+const shortDate = r => `${r.date.getMonth()+1}. ${r.date.getDate()}. ${WD[r.date.getDay()]} ${ampm(r.h,r.m)}`;
+function rowHTML(r, {num=null, white=false, rel=false, withDate=false, isNew=false}={}){
+  return `<button class="ritem tap ${white?'white':''} ${isNew?'new':''}" data-rec="${r.id}">
+    ${num!==null?`<span class="no">${num}</span>`:''}${badge(r.status)}<span class="t">${label(r)}</span>
+    <span class="time">${withDate?shortDate(r):rel?relTime(r):ampm(r.h,r.m)}</span></button>`;
+}
+let lastNewId = null;
+function renderHome(){
+  const all = []; for (let i=0; all.length<10 && i<30; i++){ const d=new Date(TODAY); d.setDate(d.getDate()-i); all.push(...recordsOf(d)); }
+  $('#recent').innerHTML = all.slice(0,10).map(r => rowHTML(r,{withDate:true,isNew:r.id===lastNewId})).join('');
+}
+
+/* ---------- 검사 내역 (기본: 오늘 목록) ---------- */
+let histDate = new Date(TODAY), histFilter = 'all';
+const FILTERS = {all:'전체', ok:'정상', err:'오류', fail:'실패'};
+function renderHistory(){
+  $('#dateLabel').textContent = `${histDate.getMonth()+1}월 ${histDate.getDate()}일 (${WD[histDate.getDay()]})`;
+  $('#todayBtn').style.display = sameDay(histDate, TODAY) ? 'none' : '';
+  $('#filterChip').style.display = histFilter==='all' ? 'none' : '';
+  $('#filterChip').textContent = FILTERS[histFilter];
+  const all = recordsOf(histDate);
+  const list = all.filter(r => histFilter==='all' || r.status===histFilter);
+  $('#histList').innerHTML = list.length
+    ? list.map(r => rowHTML(r,{num: all.length - all.indexOf(r), white:true, isNew:r.id===lastNewId})).join('')
+    : `<div class="empty"><b>${all.length? '조건에 맞는 검사가 없어요' : '이 날짜에는 검사 기록이 없어요'}</b>${all.length?'필터를 바꿔 보세요':'날짜를 눌러 다른 날을 골라 보세요'}</div>`;
+}
+$('#todayBtn').onclick = () => { histDate = new Date(TODAY); renderHistory(); };
+$('#dateBtn').onclick = () => { openCal($('#histCal'), histDate, d => { histDate = d; $('#calDim').classList.remove('on'); renderHistory(); }); $('#calDim').classList.add('on'); };
+$('#calDim').onclick = e => { if (e.target.id==='calDim') e.currentTarget.classList.remove('on'); };
+$('#filterBtn').onclick = () => {
+  $('#sheet').innerHTML = `<h3>필터</h3><div class="opts">${Object.entries(FILTERS).map(([k,v])=>`<button data-f="${k}" class="${k===histFilter?'on':''}">${v}</button>`).join('')}</div>`;
+  $('#sheetDim').classList.add('on');
+};
+$('#sheetDim').onclick = e => {
+  const f = e.target.closest('[data-f]');
+  if (f){ histFilter = f.dataset.f; renderHistory(); }
+  if (f || e.target.id==='sheetDim') $('#sheetDim').classList.remove('on');
+};
+
+/* 캘린더 */
+function openCal(el, selected, onPick){
+  let view = new Date(selected.getFullYear(), selected.getMonth(), 1);
+  const draw = () => {
+    const y = view.getFullYear(), mo = view.getMonth();
+    const first = new Date(y, mo, 1).getDay(), days = new Date(y, mo+1, 0).getDate();
+    let cells = WD.map((w,i)=>`<div class="wd ${i===0?'sun':i===6?'sat':''}">${w}</div>`).join('');
+    for (let i=0;i<first;i++) cells += '<div></div>';
+    for (let d=1; d<=days; d++){
+      const dt = new Date(y, mo, d); const recs = recordsOf(dt);
+      const fut = dt > TODAY;
+      const cls = ['d', fut?'future':'', sameDay(dt,selected)?'sel':'', sameDay(dt,TODAY)?'today':'', recs.length?'has':'', recs.some(r=>r.status==='err')?'haserr':''].join(' ');
+      cells += `<button class="${cls}" data-day="${d}" ${fut?'disabled':''}>${d}</button>`;
+    }
+    const canNext = new Date(y, mo+1, 1) <= TODAY;
+    el.innerHTML = `<div class="top"><b>${y}년 ${mo+1}월</b><button class="nav" data-m="-1">‹</button><button class="nav" data-m="1" ${canNext?'':'disabled style="opacity:.4"'}>›</button></div><div class="grid">${cells}</div>`;
+  };
+  el.onclick = e => {
+    e.stopPropagation();
+    const m = e.target.closest('[data-m]'); if (m && !m.disabled){ view.setMonth(view.getMonth()+ +m.dataset.m); draw(); return; }
+    const d = e.target.closest('[data-day]'); if (d && !d.disabled){ selected = new Date(view.getFullYear(), view.getMonth(), +d.dataset.day); draw(); onPick(selected); }
+  };
+  draw();
+}
+
+/* ---------- 오류 통계 ---------- */
+let statsDate = new Date(TODAY);
+function renderStats(){
+  openCal($('#statsCal'), statsDate, d => { statsDate = d; renderStatsSum(); });
+  renderStatsSum();
+}
+function renderStatsSum(){
+  const recs = recordsOf(statsDate);
+  const err = recs.filter(r=>r.status==='err'), fail = recs.filter(r=>r.status==='fail');
+  $('#statsSum').innerHTML = `<div class="box"><div class="lab">검사</div><div class="val">${recs.length}건</div></div>
+    <div class="box"><div class="lab">오류</div><div class="val ${err.length?'err':''}">${err.length}건</div></div>
+    <div class="box"><div class="lab">실패</div><div class="val">${fail.length}건</div></div>`;
+  $('#statsListTitle').textContent = `${statsDate.getMonth()+1}월 ${statsDate.getDate()}일 오류·실패 검사`;
+  const bad = recs.filter(r=>r.status!=='ok');
+  $('#statsList').innerHTML = bad.length ? bad.map(r=>rowHTML(r,{white:true})).join('') : `<div class="empty" style="padding:28px 0"><b>오류가 없어요</b></div>`;
+}
+
+/* ---------- 설정 ---------- */
+$('#serverBtn').onclick = () => $('#serverDim').classList.add('on');
+$('#serverCancel').onclick = () => $('#serverDim').classList.remove('on');
+$('#serverSave').onclick = () => { $('#serverVal').textContent = $('#serverInput').value || '미설정'; $('#serverDim').classList.remove('on'); };
+$('#guideAgain').onclick = () => { onbIdx = 0; renderOnb(); show('onboarding'); };
+
+/* ---------- 카메라 ---------- */
+const camVideo = $('#camVideo');
+let camPerm = null, camTimerId = null, camStart = 0;
+function enterCamera(){
+  $('#camTimer').textContent = '00:00'; $('#camState').textContent = '검사 중';
+  $('#camToast').textContent = '카메라 준비 중..';
+  camVideo.classList.remove('live'); camVideo.pause(); camVideo.currentTime = 0;
+  if (camPerm === 'allow') $('#guideDim').classList.add('on');
+  else $('#permDim').classList.add('on');
+}
+document.querySelectorAll('[data-perm]').forEach(b => b.onclick = () => {
+  $('#permDim').classList.remove('on');
+  if (b.dataset.perm === 'deny'){ $('#denyDim').classList.add('on'); return; }
+  camPerm = b.dataset.perm === 'allow' ? 'allow' : null;
+  $('#guideDim').classList.add('on');
+});
+$('#denyHome').onclick = () => { $('#denyDim').classList.remove('on'); tab('home'); };
+$('#denyRetry').onclick = () => { $('#denyDim').classList.remove('on'); $('#permDim').classList.add('on'); };
+$('#camInfo').onclick = () => { camVideo.pause(); clearInterval(camTimerId); $('#guideDim').classList.add('on'); };
+$('#guideOk').onclick = () => { $('#guideDim').classList.remove('on'); startCamera(); };
+function startCamera(){
+  camVideo.classList.add('live'); camVideo.play().catch(()=>{});
+  $('#camToast').textContent = '약봉지 인식 중..';
+  camStart = Date.now() - camVideo.currentTime*1000;
+  clearInterval(camTimerId);
+  camTimerId = setInterval(() => {
+    const s = Math.floor(camVideo.currentTime);
+    $('#camTimer').textContent = `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+  }, 250);
+}
+camVideo.onended = () => finishShoot();
+function stopCamera(){ clearInterval(camTimerId); camVideo.pause(); ['#permDim','#guideDim','#denyDim'].forEach(s=>$(s).classList.remove('on')); }
+$('#camClose').onclick = () => { stopCamera(); tab('home'); };
+$('#shootBtn').onclick = () => finishShoot();
+function finishShoot(){
+  if (current !== 'camera') return;
+  stopCamera();
+  stack.length = 0; stack.push('home');
+  show('loading', {push:false});
+}
+
+/* ---------- 분석 로딩 ---------- */
+const STEPS = [['영상 첨부'],['AI 분석'],['결과 생성']];
+function runLoading(){
+  const el = $('#steps');
+  const paint = (i, phase) => {
+    el.innerHTML = STEPS.map((s,k) => {
+      const st = k < i ? 'done' : (k === i && phase==='run') ? 'run' : '';
+      const txt = k < i ? '완료' : (k === i && phase==='run') ? '중' : '대기 중';
+      return `<div class="step ${st}"><span class="spin"><img src="assets/spinner.png" alt=""></span><img class="ok" src="assets/ic_check.svg" alt="">${s[0]} ${txt}</div>`;
+    }).join('');
+  };
+  paint(0,'wait');
+  const seq = [[0,'run',500],[1,'run',1400],[2,'run',2600],[3,'done',3600]];
+  seq.forEach(([i,p,t]) => setTimeout(()=>{ if(current==='loading') paint(i,p); }, t));
+  setTimeout(()=>{
+    if (current !== 'loading') return;
+    const n = new Date();
+    const r = makeRecord(`new${Date.now()}`, new Date(TODAY), n.getHours(), n.getMinutes(), 'err');
+    r.s = n.getSeconds();
+    DB[key(TODAY)].unshift(r); lastNewId = r.id;
+    histDate = new Date(TODAY);
+    openDetail(r.id, {fromResult:true});
+  }, 4300);
+}
+
+/* ---------- 검사 상세 + 다시보기 빨간 깜빡임 ---------- */
+const pVideo = $('#pVideo');
+let dRec = null, dByPatient = false;
+const PATIENTS = 3;
+// 환자 카드 안 봉지 상태: 색을 채운 동그라미 + 흰 아이콘 (정상 체크, 오류·실패 느낌표)
+function statusIcon(st){
+  const mark = st==='ok'
+    ? '<path d="M6 10.2l2.7 2.7L14 7.6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+    : '<path d="M10 5.6v5.2" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.1" r="1.15" fill="#fff"/>';
+  return `<svg class="sico ${st}" width="20" height="20" viewBox="0 0 20 20" aria-label="${{ok:'정상',err:'오류',fail:'실패'}[st]}"><circle cx="10" cy="10" r="10"/>${mark}</svg>`;
+}
+const PATIENT_IMG = ['assets/patient1.png','assets/patient2.png','assets/patient3.png','assets/patient4.png','assets/patient5.png','assets/patient6.png'];
+// 봉지를 환자별로 순서대로 나눈다. 환자마다 1번 봉지부터 다시 센다.
+function patientGroups(total){
+  const all = Array.from({length:total},(_,i)=>i+1), groups = []; let start = 0;
+  for (let p = 0; p < PATIENTS; p++){ const size = Math.ceil((total - start) / (PATIENTS - p)); groups.push(all.slice(start, start + size)); start += size; }
+  return groups.filter(g=>g.length);
+}
+function bagName(n){
+  if (!dByPatient) return `${n}번 봉지`;
+  const gs = patientGroups(dRec.total), i = gs.findIndex(g=>g.includes(n));
+  return `환자 ${i+1} · ${gs[i].indexOf(n)+1}번 봉지`;
+}
+function openDetail(id, {fromResult=false}={}){
+  dRec = findRecord(id); if (!dRec) return; dByPatient = fromResult;
+  if (fromResult){ stack.length = 0; stack.push('home'); show('detail',{push:false}); }
+  else show('detail');
+}
+function syncDetailHead(){ const on = $('#detailScroll').scrollTop > 2; $('#detail .bar').classList.toggle('scrolled', on); $('#dFade').classList.toggle('on', on); }
+$('#detailScroll').addEventListener('scroll', syncDetailHead);
+function renderDetail(){
+  const r = dRec; const el = $('#detail');
+  el.classList.remove('ok','err','fail'); el.classList.add(r.status);
+  const nBad = r.status==='err' ? r.anomalies.length : r.status==='fail' ? r.failBags.length : 0;
+  const word = {ok:'정상',err:'오류',fail:'실패'}[r.status];
+  const lab = r.status==='fail' ? '실패' : '오류';
+  $('#dSum').innerHTML = `<div class="box"><span class="lab">결과</span><span class="val"><span class="${r.status}">${word}</span></span></div>
+    <div class="box"><span class="lab">${lab}</span><span class="val"><span class="${r.status}">${nBad}</span></span></div>
+    <div class="box"><span class="lab">전체</span><span class="val"><span>${r.total}</span></span></div>`;
+  $('#dBagCount').textContent = r.total;
+  const d = r.date;
+  $('#dWhen').textContent = `${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()}. ${WD[d.getDay()]}  ${ampm(r.h,r.m)}`;
+  const bad = new Map(r.anomalies.map(a=>[a.bag,a]));
+  const bagHTML = (n, local = n, icon = false) => {
+    const a = bad.get(n); const f = r.failBags.includes(n);
+    const st = a ? 'err' : f ? 'fail' : 'ok';
+    return `<button class="bag tap ${a?'errbag':f?'failbag':''}" data-bag="${n}"><span class="n">${local}번 봉지${a?`<span class="why">${a.why}</span>`:f?`<span class="why">인식 실패</span>`:''}</span>${icon ? statusIcon(st) : badge(st)}</button>`;
+  };
+  // 오류·실패 봉지를 위로 정렬
+  const rank = n => bad.has(n) ? 0 : r.failBags.includes(n) ? 1 : 2;
+  const sortBad = arr => [...arr].sort((x,y) => rank(x)-rank(y) || x-y);
+  const all = Array.from({length:r.total},(_,i)=>i+1);
+  $('#dBagTitle').textContent = '포장별 검사 결과';
+  $('#dTitle').textContent = dByPatient ? '분석 결과' : '검사 상세';
+  if (dByPatient){
+    // 촬영 직후 결과: 여러 환자를 한 번에 보므로 요약과 목록을 환자 기준으로 보여 준다
+    const groups = patientGroups(r.total);
+    const pts = groups.map((g,i) => {
+      const errs = g.filter(n=>bad.has(n)), fails = g.filter(n=>r.failBags.includes(n));
+      const st = errs.length ? 'err' : fails.length ? 'fail' : 'ok';
+      return {g, i, st};
+    });
+    const nBadP = pts.filter(p=>p.st===r.status).length;
+    $('#dSum').innerHTML = `<div class="box"><span class="lab">결과</span><span class="val"><span class="${r.status}">${word}</span></span></div>
+      <div class="box"><span class="lab">${lab} 환자</span><span class="val"><span class="${r.status}">${nBadP}</span></span></div>
+      <div class="box"><span class="lab">전체 환자</span><span class="val"><span>${pts.length}</span></span></div>`;
+    $('#dBagTitle').textContent = '환자별 검사 결과';
+    $('#dBagCount').textContent = pts.length;
+    $('#dBags').innerHTML = pts.map(({g,i,st}) =>
+      `<div class="patient ${st} ${st!=='ok'?'open':''}"><button class="phead tap" data-patient><img class="pava" src="${PATIENT_IMG[i % PATIENT_IMG.length]}" alt=""><span class="ptxt"><span class="pname">환자 ${i+1}</span></span>${badge(st)}<img class="chev" src="assets/chevron_right.svg" alt=""></button><div class="pbody"><div>${sortBad(g).map(n => bagHTML(n, g.indexOf(n)+1, true)).join('')}</div></div></div>`
+    ).join('');
+  } else {
+    $('#dBags').innerHTML = sortBad(all).map(bagHTML).join('');
+  }
+  $('#pTrack').querySelectorAll('.mark').forEach(m=>m.remove());
+  r.anomalies.forEach(a => { const m = document.createElement('i'); m.className='mark'; m.style.left = (a.start/VIDEO_LEN*100)+'%'; m.style.width = ((a.end-a.start)/VIDEO_LEN*100)+'%'; $('#pTrack').appendChild(m); });
+  pVideo.currentTime = 0; $('#detailScroll').scrollTop = 0; syncDetailHead();
+  syncFlash(pVideo, $('#pFlash'), $('#pTag'), $('#pFill'));
+  pVideo.play().catch(()=>{}); $('#pPlay').textContent = '❚❚';
+}
+function activeAnomaly(t){ return dRec ? dRec.anomalies.find(a => t >= a.start && t <= a.end) : null; }
+function syncFlash(v, flash, tag, fill){
+  const a = activeAnomaly(v.currentTime);
+  flash.classList.toggle('on', !!a);
+  if (tag){ tag.classList.toggle('on', !!a); if (a) tag.textContent = `⚠ ${bagName(a.bag)} · ${a.why}`; }
+  fill.style.width = (v.currentTime / (v.duration||VIDEO_LEN) * 100) + '%';
+  document.querySelectorAll('#dBags .bag').forEach(b => b.classList.toggle('live', !!a && +b.dataset.bag === a.bag));
+  if (a){ const lb = document.querySelector(`#dBags .bag[data-bag="${a.bag}"]`); lb?.closest('.patient')?.classList.add('open'); }
+  return a;
+}
+pVideo.ontimeupdate = () => syncFlash(pVideo, $('#pFlash'), $('#pTag'), $('#pFill'));
+pVideo.onended = () => { $('#pPlay').textContent = '▶'; };
+$('#pPlay').onclick = () => { if (pVideo.paused){ if (pVideo.ended) pVideo.currentTime = 0; pVideo.play(); $('#pPlay').textContent='❚❚'; } else { pVideo.pause(); $('#pPlay').textContent='▶'; } };
+function seekOn(track, v){ track.onclick = e => { const r = track.getBoundingClientRect(); v.currentTime = (e.clientX - r.left)/r.width * (v.duration||VIDEO_LEN); }; }
+seekOn($('#pTrack'), pVideo);
+$('#dBags').onclick = e => {
+  const ph = e.target.closest('[data-patient]'); if (ph){ ph.parentElement.classList.toggle('open'); return; }
+  const b = e.target.closest('[data-bag]'); if (!b) return;
+  const n = +b.dataset.bag; const a = dRec.anomalies.find(x=>x.bag===n);
+  pVideo.currentTime = a ? Math.max(0, a.start - 0.8) : bagTime(n);
+  pVideo.play(); $('#pPlay').textContent='❚❚';
+  $('#detailScroll').scrollTo({top:0, behavior:'smooth'});
+};
+$('#pFull').onclick = () => { const t = pVideo.currentTime; pVideo.pause(); show('replay'); rVideo.currentTime = t; };
+
+/* 크게 보기 */
+const rVideo = $('#rVideo');
+function enterReplay(){
+  $('#rTrack').querySelectorAll('.mark').forEach(m=>m.remove());
+  dRec.anomalies.forEach(a => { const m = document.createElement('i'); m.className='mark'; m.style.left=(a.start/VIDEO_LEN*100)+'%'; m.style.width=((a.end-a.start)/VIDEO_LEN*100)+'%'; $('#rTrack').appendChild(m); });
+  rVideo.play().catch(()=>{}); $('#rPlay').textContent='❚❚';
+}
+rVideo.ontimeupdate = () => {
+  const a = syncFlash(rVideo, $('#rFlash'), null, $('#rFill'));
+  $('#rScreen').classList.toggle('on', !!a);
+  $('#rMsg').classList.toggle('on', !!a); if (a) $('#rMsg').textContent = `⚠ ${bagName(a.bag)} · ${a.why}`;
+  const s = Math.floor(rVideo.currentTime); $('#rTime').textContent = `00:${String(s).padStart(2,'0')}`;
+};
+rVideo.onended = () => $('#rPlay').textContent='▶';
+$('#rPlay').onclick = () => { if (rVideo.paused){ if (rVideo.ended) rVideo.currentTime=0; rVideo.play(); $('#rPlay').textContent='❚❚'; } else { rVideo.pause(); $('#rPlay').textContent='▶'; } };
+seekOn($('#rTrack'), rVideo);
+$('#rClose').onclick = () => { const t = rVideo.currentTime; rVideo.pause(); back(); pVideo.currentTime = t; };
+
+/* ---------- 화면 진입 ---------- */
+const ENTER = {
+  splash: runSplash,
+  onboarding: renderOnb,
+  home: () => { renderHome(); $('#home .tabbar').innerHTML = renderTabbar('home'); },
+  history: () => { renderHistory(); $('#history .tabbar').innerHTML = renderTabbar('history'); },
+  settings: () => { $('#settings .tabbar').innerHTML = renderTabbar('settings'); },
+  stats: renderStats,
+  camera: enterCamera,
+  loading: runLoading,
+  detail: () => { if (current==='detail' && dRec) renderDetail(); },
+  replay: enterReplay,
+};
+// 상세에서 크게 보기 갔다 돌아올 때는 다시 그리지 않음
+const _enterDetail = ENTER.detail; let skipDetailRender = false;
+ENTER.detail = () => { if (skipDetailRender){ skipDetailRender=false; pVideo.play().catch(()=>{}); return; } _enterDetail(); };
+const _back = back;
+back = function(){ if (current==='replay') skipDetailRender = true; _back(); };
+
+/* 바로가기 메뉴 */
+document.querySelectorAll('[data-jump]').forEach(b => b.onclick = () => {
+  const j = b.dataset.jump; stack.length = 0;
+  document.querySelectorAll('.dim').forEach(d=>d.classList.remove('on'));
+  if (j.startsWith('detail-')){
+    const st = j.split('-')[1];
+    const r = recordsOf(TODAY).find(x=>x.status===st);
+    stack.push('history'); dRec = r; show('detail',{push:false});
+  } else { if (!['home','history','settings','splash','onboarding'].includes(j)) stack.push('home'); show(j,{push:false}); }
+});
+
+document.querySelectorAll('[data-dw]').forEach(b => b.onclick = () => {
+  const big = b.dataset.dw === '412';
+  device.style.setProperty('--dw', big ? '412px' : '360px');
+  device.style.setProperty('--dh', big ? '915px' : '640px');
+  setTimeout(fit, 380);
+});
+show('splash', {push:false});
+</script>
+</body>
+</html>
