@@ -130,7 +130,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .rlist{display:flex;flex-direction:column;gap:8px;padding:0 20px 16px}
 .ritem{background:var(--g100);border-radius:12px;padding:16px;display:flex;align-items:center;gap:8px;text-align:left;width:100%}
 .ritem .t{flex:1;font:600 14px/1.429 Pretendard;color:var(--g700);letter-spacing:-.3px}
-.ritem .time{font:500 11px/1.273 Pretendard;color:var(--g400);letter-spacing:.34px}
+.ritem .time{white-space:pre;font:500 11px/1.273 Pretendard;color:var(--g400);letter-spacing:.34px}
 .ritem .no{width:28px;margin-right:-8px;flex:none;font:600 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.308px}
 #histList .ritem{height:44px;padding:0 16px;border-radius:10px}
 .ritem.white{background:#fff}
@@ -307,7 +307,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .sum .lab{font:600 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.3px}
 .sum .val{font:600 20px/1.4 Pretendard;letter-spacing:-.44px;color:var(--g600);display:flex;gap:2px}
 .sum .val .ok{color:var(--teal-60)} .sum .val .err{color:var(--coral-60)} .sum .val .fail{color:var(--g500)}
-.player{position:relative;aspect-ratio:435/287;border:1px solid var(--g300);border-radius:12px;overflow:hidden;background:var(--g800)}
+.player{position:relative;aspect-ratio:4/3;border:1px solid var(--g300);border-radius:12px;overflow:hidden;background:var(--g800)}
 .player video{position:absolute;left:50%;top:50%;width:320px;height:320px;object-fit:cover;transform:translate(-50%,-50%) rotate(-90deg)}
 .flash{position:absolute;inset:0;pointer-events:none;opacity:0;background:rgba(var(--alert),.35);box-shadow:inset 0 0 0 3px rgba(var(--alert),.9);z-index:2}
 .flash.on{animation:alertblink .55s ease-in-out infinite alternate}
@@ -831,7 +831,7 @@ function relTime(r){
   if (sameDay(r.date, TODAY) && diff >= 0 && diff < 60) return diff < 1 ? '방금 전' : `${diff}분 전`;
   return ampm(r.h, r.m);
 }
-const shortDate = r => `${r.date.getMonth()+1}. ${r.date.getDate()}. ${WD[r.date.getDay()]} ${ampm(r.h,r.m)}`;
+const shortDate = r => `${r.date.getMonth()+1}.${r.date.getDate()} ${WD[r.date.getDay()]}  ${ampm(r.h,r.m)}`;
 function rowHTML(r, {num=null, white=false, rel=false, withDate=false, isNew=false}={}){
   return `<div class="ritem tap ${white?'white':''} ${isNew?'new':''}" data-rec="${r.id}" role="button" tabindex="0">
     ${num!==null?`<span class="no">${num}</span>`:''}${badge(r.status)}<span class="t">${label(r)}</span>
@@ -1035,7 +1035,7 @@ function renderDetail(){
     <div class="box"><span class="lab">전체</span><span class="val"><span>${r.total}</span></span></div>`;
   $('#dBagCount').textContent = r.total;
   const d = r.date;
-  $('#dWhen').textContent = `${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()}. ${WD[d.getDay()]}  ${ampm(r.h,r.m)}`;
+  $('#dWhen').textContent = `${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()} ${WD[d.getDay()]}  ${ampm(r.h,r.m)}`;
   const bad = new Map(r.anomalies.map(a=>[a.bag,a]));
   const bagHTML = (n, local = n, icon = false) => {
     const a = bad.get(n); const f = r.failBags.includes(n);
