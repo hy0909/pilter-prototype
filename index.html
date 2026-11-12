@@ -1087,7 +1087,7 @@ function renderDetail(){
     });
     const nBadP = pts.filter(p=>p.st===r.status).length;
     $('#dSum').innerHTML = `<div class="box"><span class="lab">결과</span><span class="val"><span class="${r.status}">${word}</span></span></div>
-      <div class="box"><span class="lab">${lab} 환자</span><span class="val"><span class="${r.status}">${nBadP}</span></span></div>
+      <div class="box"><span class="lab">${word} 환자</span><span class="val"><span class="${r.status}">${nBadP}</span></span></div>
       <div class="box"><span class="lab">전체 환자</span><span class="val"><span>${pts.length}</span></span></div>`;
     $('#dBagTitle').textContent = '환자별 검사 결과';
     $('#dBagCount').textContent = pts.length;
@@ -1095,7 +1095,11 @@ function renderDetail(){
       `<div class="patient ${st} ${st!=='ok'?'open':''}"><button class="phead tap" data-patient><img class="pava" src="${PATIENT_IMG[i % PATIENT_IMG.length]}" alt=""><span class="ptxt"><span class="pname">환자 ${i+1}</span></span>${badge(st)}<img class="chev" src="assets/chevron_right.svg" alt=""></button><div class="pbody"><div><img class="pouch" src="${sampleImg((idHash(r.id) + i) % 5 + 1, st, idHash(r.id) + i)}" alt="환자 ${i+1} 약봉지 이미지">${sortBad(g).filter(n => bad.has(n) || r.failBags.includes(n)).map(n => bagHTML(n, g.indexOf(n)+1, true)).join('')}</div></div></div>`
     ).join('');
   } else {
-    $('#dBags').innerHTML = sortBad(all).map(n => bagHTML(n)).join('');
+    // 오류·실패 봉지만 하나씩 나열한다. 모두 정상이면 정상 한 줄로 묶어 보여 준다
+    const badBags = sortBad(all).filter(n => bad.has(n) || r.failBags.includes(n));
+    $('#dBags').innerHTML = badBags.length
+      ? badBags.map(n => bagHTML(n)).join('')
+      : `<div class="bag allok"><span class="n">${r.total}개 모두 정상</span>${badge('ok')}</div>`;
   }
   $('#pTrack').querySelectorAll('.mark').forEach(m=>m.remove());
   r.anomalies.forEach(a => { const m = document.createElement('i'); m.className='mark'; m.style.left = (a.start/VIDEO_LEN*100)+'%'; m.style.width = ((a.end-a.start)/VIDEO_LEN*100)+'%'; $('#pTrack').appendChild(m); });
