@@ -145,6 +145,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .ddel{padding:4px 20px 44px}
 .btn.delbtn{border:1px solid var(--g300);background:#fff;color:var(--coral-70)}
 #detail.byp .ddel{display:none}
+#detail.byp #dPatRow{display:none}   /* 분석 결과는 환자 카드마다 복약 패턴을 보여 줌 */
 .ritem.new{animation:newrow 1.6s ease}
 @keyframes newrow{0%{box-shadow:0 0 0 2px var(--teal-60)}100%{box-shadow:0 0 0 2px transparent}}
 
@@ -342,7 +343,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .bag.failbag .why{color:var(--g400)}
 .bag.live{background:#ffeceb;border-color:var(--coral-60)}
 .patient{background:#fff;border-radius:12px;overflow:hidden}
-.phead{width:100%;height:52px;padding:0 12px 0 16px;display:flex;align-items:center;gap:8px;text-align:left}
+.phead{width:100%;min-height:52px;padding:10px 12px 10px 16px;display:flex;align-items:center;gap:8px;text-align:left}
 .phead .pname{font:600 15px/1.467 Pretendard;color:var(--g700);letter-spacing:-.15px}
 .sico{flex:none} .sico.ok circle:first-child{fill:var(--teal-60)} .sico.err circle:first-child{fill:var(--coral-60)} .sico.fail circle:first-child{fill:var(--g400)}
 #detail #player{display:none}   /* 영상은 어느 화면에서도 보이지 않음 */
@@ -351,6 +352,12 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .pouch{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;background:var(--g200)}
 .phead .pava{width:32px;height:32px;border-radius:50%;flex:none;object-fit:cover}
 .phead .ptxt{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.nophoto{width:100%;aspect-ratio:4/3;border-radius:10px;background:var(--g100);border:1px solid var(--g200);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--g300)}   /* 사진이 없을 때 */
+.nophoto span{font:500 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.28px}
+#dNoPhoto{display:none;border-radius:12px}
+#detail:not(.byp).nopic #dNoPhoto{display:flex} #detail:not(.byp).nopic .dpouch{display:none}
+.phead .psub{font:500 13px/1.385 Pretendard;color:var(--g400);letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}   /* 복약 패턴, 실패면 실패 사유 */
+.when .miss{color:var(--g400)!important}
 .phead .chev{width:20px;height:20px;transform:rotate(90deg);transition:transform .2s}
 .patient.open .phead .chev{transform:rotate(-90deg)}
 .pbody{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}
@@ -610,7 +617,9 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
           </div>
         </div>
         <img class="dpouch" id="dPouch" alt="약봉지 이미지">
+        <div class="nophoto" id="dNoPhoto"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 9c-1.626 0-3 1.374-3 3s1.374 3 3 3 3-1.374 3-3-1.374-3-3-3z"/><path d="M20 5h-2.586l-2.707-2.707A.996.996 0 0 0 14 2h-4a.996.996 0 0 0-.707.293L6.586 5H4c-1.103 0-2 .897-2 2v11c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V7c0-1.103-.897-2-2-2zm-8 12c-2.71 0-5-2.29-5-5s2.29-5 5-5 5 2.29 5 5-2.29 5-5 5z"/></svg><span>사진이 없습니다</span></div>
         <div class="when"><span>검사일</span><span id="dWhen"></span></div>
+        <div class="when" id="dPatRow"><span id="dPatLab">복약 패턴</span><span id="dPat"></span></div>
       </div>
       <div class="sec-title bagtitle"><span id="dBagTitle">포장별 검사 결과</span><em id="dBagCount"></em></div>
       <div class="bags" id="dBags"></div>
@@ -695,11 +704,22 @@ const longDate = d => `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}
 const ampm = (h,m) => `${h<12?'오전':'오후'} ${h%12===0?12:h%12}:${String(m).padStart(2,'0')}`;
 
 /* ---------- 가짜 기록 ---------- */
+const FAIL_REASONS = ['패턴 미감지', '서버 오류', '녹화 파일 없음'];
+const PATTERNS = [[2,2,1],[1,1],[1,2,1],[1],[2,1]];
+const NO_PHOTO = `<div class="nophoto"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 9c-1.626 0-3 1.374-3 3s1.374 3 3 3 3-1.374 3-3-1.374-3-3-3z"/><path d="M20 5h-2.586l-2.707-2.707A.996.996 0 0 0 14 2h-4a.996.996 0 0 0-.707.293L6.586 5H4c-1.103 0-2 .897-2 2v11c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V7c0-1.103-.897-2-2-2zm-8 12c-2.71 0-5-2.29-5-5s2.29-5 5-5 5 2.29 5 5-2.29 5-5 5z"/></svg><span>사진이 없습니다</span></div>`;
+// 서버 오류·녹화 파일 없음이면 잘라 낸 약봉지 사진이 없다
+const hasPhoto = r => !(r.status === 'fail' && r.failReason !== '패턴 미감지');
+const patternText = p => `하루 ${p.length}회 · ${p.map(n => n + '알').join(' · ')}`;
 function seeded(n){ let s = n; return () => (s = (s*9301+49297)%233280)/233280; }
 function makeRecord(id, date, h, m, status){
   const r = { id, date, h, m, status, total: BAG_COUNT, anomalies: [], failBags: [] };
   if (status === 'err') r.anomalies = ANOMALIES.slice();
   if (status === 'fail') r.failBags = [1];
+  // 기존 앱의 실패(ERROR이면서 오류 봉지 0개)는 아래 세 가지 사유 중 하나
+  const hs = [...String(id)].reduce((a,c)=>a + c.charCodeAt(0), 0);
+  if (status === 'fail') r.failReason = FAIL_REASONS[hs % FAIL_REASONS.length];
+  // 복약 패턴: 환자별 하루 복용 횟수와 회차별 알 수 (서버 응답의 pattern 값)
+  r.patterns = Array.from({length: 3}, (_,i) => PATTERNS[(hs + i) % PATTERNS.length]);
   return r;
 }
 const DB = {};
@@ -1052,7 +1072,8 @@ $('#detailScroll').addEventListener('scroll', syncDetailHead);
 function renderDetail(){
   const r = dRec; const el = $('#detail');
   el.classList.remove('ok','err','fail'); el.classList.add(r.status);
-  el.classList.toggle('byp', dByPatient);   // 분석 결과: 영상 없이 환자별 약봉지 이미지로 보여 줌 (기존 앱과 같게)
+  el.classList.toggle('byp', dByPatient);
+  el.classList.toggle('nopic', !hasPhoto(r));   // 분석 결과: 영상 없이 환자별 약봉지 이미지로 보여 줌 (기존 앱과 같게)
   // 검사 상세: 영상 대신 약봉지 이미지 한 장을 기록마다 같은 것으로 고정해 보여 줌
   // 이전 기록의 사진이 잠깐 보였다가 바뀌지 않도록, 새 사진이 다 불러와진 뒤에만 보여 준다
   const h = idHash(r.id), pouch = $('#dPouch'), want = sampleImg(h % 5 + 1);
@@ -1071,11 +1092,15 @@ function renderDetail(){
   $('#dBagCount').textContent = r.total;
   const d = r.date;
   $('#dWhen').textContent = `${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()} ${WD[d.getDay()]}  ${ampm(r.h,r.m)}`;
+  const isFail = r.status === 'fail';
+  $('#dPatLab').textContent = isFail ? '실패 사유' : '복약 패턴';
+  $('#dPat').textContent = isFail ? r.failReason : patternText(r.patterns[0]);
+  $('#dPat').classList.toggle('miss', isFail);
   const bad = new Map(r.anomalies.map(a=>[a.bag,a]));
   const bagHTML = (n, local = n, icon = false) => {
     const a = bad.get(n); const f = r.failBags.includes(n);
     const st = a ? 'err' : f ? 'fail' : 'ok';
-    return `<button class="bag tap ${a?'errbag':f?'failbag':''}" data-bag="${n}"><span class="n">${local}번 봉지${a?`<span class="why">${a.why}</span>`:f?`<span class="why">인식 실패</span>`:''}</span>${icon ? statusIcon(st) : badge(st)}</button>`;
+    return `<button class="bag tap ${a?'errbag':f?'failbag':''}" data-bag="${n}"><span class="n">${f && !a ? '검사 실패' : `${local}번 봉지`}${a?`<span class="why">${a.why}</span>`:f?`<span class="why">${r.failReason}</span>`:''}</span>${icon ? statusIcon(st) : badge(st)}</button>`;
   };
   // 오류·실패 봉지를 위로 정렬
   const rank = n => bad.has(n) ? 0 : r.failBags.includes(n) ? 1 : 2;
@@ -1098,7 +1123,7 @@ function renderDetail(){
     $('#dBagTitle').textContent = '환자별 검사 결과';
     $('#dBagCount').textContent = pts.length;
     $('#dBags').innerHTML = pts.map(({g,i,st}) =>
-      `<div class="patient ${st} ${st!=='ok'?'open':''}"><button class="phead tap" data-patient><img class="pava" src="${PATIENT_IMG[i % PATIENT_IMG.length]}" alt=""><span class="ptxt"><span class="pname">환자 ${i+1}</span></span>${badge(st)}<img class="chev" src="assets/chevron_right.svg" alt=""></button><div class="pbody"><div><img class="pouch" src="${sampleImg((idHash(r.id) + i) % 5 + 1)}" alt="환자 ${i+1} 약봉지 이미지">${sortBad(g).filter(n => bad.has(n) || r.failBags.includes(n)).map(n => bagHTML(n, g.indexOf(n)+1, true)).join('')}</div></div></div>`
+      `<div class="patient ${st} ${st!=='ok'?'open':''}"><button class="phead tap" data-patient><img class="pava" src="${PATIENT_IMG[i % PATIENT_IMG.length]}" alt=""><span class="ptxt"><span class="pname">환자 ${i+1}</span><span class="psub">${st==='fail' ? r.failReason : patternText(r.patterns[i % r.patterns.length])}</span></span>${badge(st)}<img class="chev" src="assets/chevron_right.svg" alt=""></button><div class="pbody"><div>${st==='fail' && !hasPhoto(r) ? NO_PHOTO : `<img class="pouch" src="${sampleImg((idHash(r.id) + i) % 5 + 1)}" alt="환자 ${i+1} 약봉지 이미지">`}${sortBad(g).filter(n => bad.has(n) || r.failBags.includes(n)).map(n => bagHTML(n, g.indexOf(n)+1, true)).join('')}</div></div></div>`
     ).join('');
   } else {
     // 오류·실패 봉지만 하나씩 나열한다. 모두 정상이면 정상 한 줄로 묶어 보여 준다
