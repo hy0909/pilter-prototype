@@ -10,7 +10,7 @@
 <style>
 :root{
   --teal-60:#0aa0a5; --teal-80:#056467; --teal-90:#004246;
-  --coral-60:#ed7f74; --coral-70:#c05e57;
+  --coral-5:#fff7f6; --coral-10:#ffefed; --coral-30:#ffc2ba; --coral-60:#ed7f74; --coral-70:#c05e57;
   --g0:#fff; --g50:#f8fafc; --g100:#f2f6fa; --g150:#eff4f9; --g200:#e2e8f0; --g300:#cbd5e1;
   --g400:#94a3b8; --g500:#64748b; --g600:#475569; --g700:#334155; --g800:#1e293b; --g900:#0f172a;
   --alert: 239, 68, 68;
@@ -80,7 +80,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 #onboarding .ill .lot.swap{animation:fade .35s ease both}
 #onboarding h2{font:600 20px/1.4 Pretendard;color:var(--g700);margin-top:20px;text-align:center}
 #onboarding .dots{width:40px;height:8px;margin-top:auto;margin-bottom:0}
-#onboarding .foot{padding:16px 20px;display:flex;flex-direction:column;gap:8px;background:#fff}
+#onboarding .foot{padding:16px 20px 40px;display:flex;flex-direction:column;gap:8px;background:#fff}
 
 /* 홈 */
 #home{background:#fff}
@@ -128,21 +128,23 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .sec-title button{width:24px;height:24px;display:flex;align-items:center;justify-content:center}
 .sec-title img{width:20px;height:20px}
 .rlist{display:flex;flex-direction:column;gap:8px;padding:0 20px 16px}
-.ritem{background:var(--g100);border-radius:12px;padding:16px;display:flex;align-items:center;gap:8px;text-align:left;width:100%}
+.ritem{background:var(--g100);border-radius:12px;padding:16px 8px 16px 16px;display:flex;align-items:center;gap:8px;text-align:left;width:100%}
 .ritem .t{flex:1;font:600 14px/1.429 Pretendard;color:var(--g700);letter-spacing:-.3px}
 .ritem .time{white-space:pre;font:500 11px/1.273 Pretendard;color:var(--g400);letter-spacing:.34px}
 .ritem .no{width:28px;margin-right:-8px;flex:none;font:600 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.308px}
-#histList .ritem{height:44px;padding:0 16px;border-radius:10px}
+#histList .ritem{height:44px;padding:0 8px 0 16px;border-radius:10px}
 .ritem.white{background:#fff}
+#recent .ritem.err{background:var(--coral-10)}   /* 피그마 홈 최근 검사 내역: coral/10, 테두리 없음 */
+#histList .ritem.err{background:var(--coral-5);border:1px solid var(--coral-30)}   /* 피그마 검사 내역: coral/5 + coral/30 1px */
 .ritem{cursor:pointer}
-.ritem .kebab{flex:none;width:24px;height:24px;margin:0 -8px 0 -2px;display:flex;align-items:center;justify-content:center;color:var(--g300);border-radius:6px}
+.ritem .kebab{flex:none;width:24px;height:24px;margin:0 -4px;display:flex;align-items:center;justify-content:center;color:var(--g300);border-radius:6px}
 .ritem .kebab:active{background:var(--g150)}
 .rmenu{position:absolute;z-index:55;display:none;min-width:120px;background:#fff;border-radius:10px;padding:4px;box-shadow:0 4px 16px rgba(15,23,42,.14),0 0 0 1px var(--g150)}
 .rmenu.on{display:block;animation:fade .15s ease}
 .rmenu button{width:100%;height:40px;padding:0 12px;display:flex;align-items:center;gap:8px;border-radius:6px;font:500 14px/1.429 Pretendard;color:var(--coral-70);text-align:left}
 .rmenu button:active{background:var(--g100)}
 .btn.danger{background:var(--coral-60);color:#fff}
-.ddel{padding:4px 20px 44px}
+.ddel{padding:0 20px 24px}
 .btn.delbtn{border:1px solid var(--g300);background:#fff;color:var(--coral-70)}
 #detail.byp .ddel{display:none}
 #detail.byp #dPatRow{display:none}   /* 분석 결과는 환자 카드마다 복약 패턴을 보여 줌 */
@@ -154,11 +156,13 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .head{height:48px;flex:none;display:flex;align-items:center;padding:0 20px;gap:8px}
 .head h1{flex:1;font:700 20px/1.4 Pretendard;color:var(--g900)}
 .head .icbtn{width:24px;height:24px;display:flex;align-items:center;justify-content:center}
-.datebar{display:flex;align-items:center;gap:8px;padding:8px 12px 8px 20px;font:600 15px/1.467 Pretendard;color:var(--g600);letter-spacing:-.15px}
+.datebar{display:flex;align-items:center;gap:8px;padding:8px 20px;font:600 15px/1.467 Pretendard;color:var(--g600);letter-spacing:-.15px}
 .datebar button{display:flex;align-items:center;gap:8px;padding:4px 6px;margin:-4px -6px;border-radius:6px}
 .datebar button:hover{background:rgba(0,0,0,.04)}
 .datebar img{width:16px;height:16px}
-.datebar .today{margin-left:auto;font:500 12px/1 Pretendard;color:var(--teal-60);padding:6px 8px;border-radius:6px;background:#fff}
+.datebar .today{font:500 12px/1 Pretendard;color:var(--teal-60);padding:6px 8px;border-radius:6px;background:#fff}
+.datebar .fbtn{width:20px;height:20px;padding:4px;margin:-4px;box-sizing:content-box;justify-content:center;color:var(--g400)}   /* 피그마: 20x20 안에 18px 아이콘, gray/400 */
+.datebar .fbtn svg{display:block}
 .datebar .chip{font:500 12px/1 Pretendard;color:var(--g500);background:#fff;padding:5px 8px;border-radius:999px}
 .empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--g400);font:400 15px/1.6 Pretendard;padding:60px 20px;text-align:center}
 .empty b{font:600 16px/1.5 Pretendard;color:var(--g600)}
@@ -168,7 +172,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .dim.on{display:flex;animation:fadein .2s ease}
 .dim.center{align-items:center}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
-.sheet{background:#fff;width:100%;border-radius:20px 20px 0 0;padding:20px 18px 28px;animation:up .25s ease}
+.sheet{background:#fff;width:100%;border-radius:20px 20px 0 0;padding:20px 18px 48px;animation:up .25s ease}
 @keyframes up{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
 .sheet h3{font:700 18px/1.4 Pretendard;color:var(--g900);margin-bottom:14px}
 .opts{display:flex;flex-direction:column;gap:6px}
@@ -498,11 +502,13 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
   <!-- 검사 내역 -->
   <section class="screen" id="history">
     <div class="status"><span class="clock">12:30</span><img src="assets/status_right.svg" alt=""></div>
-    <div class="head"><h1>검사 내역</h1><button class="icbtn" id="filterBtn" aria-label="필터"><img src="assets/ic_filter.svg" alt="" style="width:22px;height:22px"></button></div>
+    <div class="head"><h1>검사 내역</h1></div>
     <div class="datebar">
       <button id="dateBtn"><span id="dateLabel"></span><img src="assets/ic_calendar.svg" alt=""></button>
       <span class="chip" id="filterChip" style="display:none"></span>
+      <span style="flex:1"></span>
       <button class="today" id="todayBtn" style="display:none">오늘</button>
+      <button class="fbtn" id="filterBtn" aria-label="필터"><svg width="18" height="18" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M2.75 5.5H19.25M6.41667 11H15.5833M9.16667 16.5H12.8333" stroke="currentColor" stroke-width="1.83333" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
     <div class="scroll"><div class="rlist" id="histList" style="padding-top:2px"></div></div>
     <div class="tabbar"></div>
@@ -865,9 +871,9 @@ function relTime(r){
 }
 const shortDate = r => `${r.date.getMonth()+1}.${r.date.getDate()} ${WD[r.date.getDay()]}  ${ampm(r.h,r.m)}`;
 function rowHTML(r, {num=null, white=false, rel=false, withDate=false, isNew=false}={}){
-  return `<div class="ritem tap ${white?'white':''} ${isNew?'new':''}" data-rec="${r.id}" role="button" tabindex="0">
+  return `<div class="ritem tap ${r.status} ${white?'white':''} ${isNew?'new':''}" data-rec="${r.id}" role="button" tabindex="0">
     ${num!==null?`<span class="no">${num}</span>`:''}${badge(r.status)}<span class="t">${label(r)}</span>
-    <span class="time">${withDate?shortDate(r):rel?relTime(r):ampm(r.h,r.m)}</span><button class="kebab" data-menu="${r.id}" aria-label="더보기">${ICON.more}</button></div>`;
+    <span class="time">${withDate && !sameDay(r.date, TODAY)?shortDate(r):rel?relTime(r):ampm(r.h,r.m)}</span><button class="kebab" data-menu="${r.id}" aria-label="더보기">${ICON.more}</button></div>`;
 }
 let lastNewId = null;
 function renderHome(){
@@ -1087,7 +1093,7 @@ function renderDetail(){
   const word = {ok:'정상',err:'오류',fail:'실패'}[r.status];
   const lab = r.status==='fail' ? '실패' : '오류';
   $('#dSum').innerHTML = `<div class="box"><span class="lab">결과</span><span class="val"><span class="${r.status}">${word}</span></span></div>
-    <div class="box"><span class="lab">${lab}</span><span class="val"><span class="${r.status}">${nBad}</span></span></div>
+    <div class="box"><span class="lab">${lab}</span><span class="val"><span class="${r.status==='fail'?'fail':''}">${nBad}</span></span></div>
     <div class="box"><span class="lab">전체</span><span class="val"><span>${r.total}</span></span></div>`;
   $('#dBagCount').textContent = r.total;
   const d = r.date;
@@ -1118,7 +1124,7 @@ function renderDetail(){
     });
     const nBadP = pts.filter(p=>p.st===r.status).length;
     $('#dSum').innerHTML = `<div class="box"><span class="lab">결과</span><span class="val"><span class="${r.status}">${word}</span></span></div>
-      <div class="box"><span class="lab">${word} 환자</span><span class="val"><span class="${r.status}">${nBadP}</span></span></div>
+      <div class="box"><span class="lab">${word} 환자</span><span class="val"><span class="${r.status==='fail'?'fail':''}">${nBadP}</span></span></div>
       <div class="box"><span class="lab">전체 환자</span><span class="val"><span>${pts.length}</span></span></div>`;
     $('#dBagTitle').textContent = '환자별 검사 결과';
     $('#dBagCount').textContent = pts.length;
