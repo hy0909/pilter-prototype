@@ -33,9 +33,9 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .status.white{color:#fff}
 .scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
 .scroll::-webkit-scrollbar{display:none}
-.badge{display:inline-flex;align-items:center;justify-content:center;padding:1px 6px;border-radius:4px;font:500 13px/1.385 Pretendard;letter-spacing:.25px;color:#fff;flex:none}
+.badge{display:inline-flex;align-items:center;justify-content:center;padding:1px 6px;border-radius:4px;font:500 13px/18px Pretendard;letter-spacing:.25px;color:#fff;flex:none}
 .badge.ok{background:var(--teal-60)} .badge.err{background:var(--coral-60)} .badge.fail{background:var(--g400)}
-.btn{height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font:500 14px/1.429 Pretendard;letter-spacing:.2px;width:100%}
+.btn{height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font:500 14px/20px Pretendard;letter-spacing:.2px;width:100%}
 .btn.primary{background:var(--teal-60);color:#fff}
 .btn.ghost{color:var(--g600)}
 .btn.line{border:1px solid var(--g600);color:var(--g700);background:#fff}
@@ -49,7 +49,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .device.dark-nav .navbar i{background:#fff;opacity:.9}
 .tabbar{flex:none;background:#fff;border-top:1px solid var(--g150);height:80px;display:flex;flex-direction:column}
 .tabs{display:flex;height:56px}
-.tabs button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:500 11px/1.273 'Noto Sans KR',Pretendard;letter-spacing:.34px;color:var(--g400)}
+.tabs button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:500 11px/14px 'Noto Sans KR',Pretendard;letter-spacing:.34px;color:var(--g400)}
 .tabs button.on{color:var(--teal-60)}
 .tabs img{width:24px;height:24px}
 .tabs .set img{width:22px;height:22px;margin:1px}
@@ -59,8 +59,8 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 #splash{background:#fff}
 #splash .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:40px}
 #splash .logo{width:111px;height:142px;object-fit:cover;margin-bottom:-4px}
-#splash .word{font:400 32px/1.313 'Readex Pro';color:#078185;letter-spacing:-.8px}
-#splash .copy{font:700 24px/1.333 Pretendard;letter-spacing:-.552px;text-align:center;color:#1e293b}
+#splash .word{font:400 32px/42px 'Readex Pro';color:#078185;letter-spacing:-.8px}
+#splash .copy{font:700 24px/32px Pretendard;letter-spacing:-.552px;text-align:center;color:#1e293b}
 #splash .copy b{color:#078185;font-weight:600}
 #splash .fade{animation:fade .6s ease both}
 /* 문구는 위로 올라가며 사라지고, 로고와 글자는 차례로 아래에서 살짝 올라옴 */
@@ -78,7 +78,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 #onboarding .ill svg{display:block}
 #onboarding .ill .lot{position:absolute;inset:0}
 #onboarding .ill .lot.swap{animation:fade .35s ease both}
-#onboarding h2{font:700 20px/1.4 Pretendard;color:var(--g700);margin-top:20px;text-align:center}
+#onboarding h2{font:700 20px/28px Pretendard;color:var(--g700);margin-top:20px;text-align:center}
 #onboarding .dots{width:40px;height:8px;margin-top:auto;margin-bottom:16px}   /* 점~버튼 32 (피그마 360·412 공통) */
 #onboarding .foot{padding:16px 20px 40px;display:flex;flex-direction:column;gap:8px;background:#fff}
 
@@ -120,18 +120,18 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 #home .brand{height:48px;display:flex;align-items:center;padding:12px 20px;font:400 22px/1 'Readex Pro';color:var(--teal-90);letter-spacing:-.44px}
 #home .cards{display:flex;gap:12px;padding:40px 20px 20px}
 #home .card{flex:1;background:#fff;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:36px;text-align:left}
-#home .card span{font:700 20px/1.4 Pretendard;color:var(--g900);letter-spacing:0}   /* 피그마 title/sm */
+#home .card span{font:700 20px/28px Pretendard;color:var(--g900);letter-spacing:0}   /* 피그마 title/sm */
 #home .card .ico{width:44px;height:44px;position:relative;overflow:hidden}
 #home .card .ico img{position:absolute}
-.sec-title{display:flex;align-items:center;padding:24px 20px 12px;font:600 16px/1.5 Pretendard;color:var(--g700);letter-spacing:-.25px}
+.sec-title{display:flex;align-items:center;padding:24px 20px 12px;font:600 18px/28px Pretendard;color:var(--g700);letter-spacing:-.2826px}   /* subtitle/lg */
 .sec-title span{flex:1}
 .sec-title button{width:24px;height:24px;display:flex;align-items:center;justify-content:center}
 .sec-title img{width:20px;height:20px}
 .rlist{display:flex;flex-direction:column;gap:8px;padding:0 20px 16px}
 .ritem{background:var(--g100);border-radius:12px;padding:16px 8px 16px 16px;display:flex;align-items:center;gap:8px;text-align:left;width:100%}
-.ritem .t{flex:1;font:600 14px/1.429 Pretendard;color:var(--g700);letter-spacing:-.3px}
-.ritem .time{white-space:pre;font:500 11px/1.273 Pretendard;color:var(--g400);letter-spacing:.34px}
-.ritem .no{width:28px;margin-right:-8px;flex:none;font:600 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.308px}
+.ritem .t{flex:1;font:600 14px/20px Pretendard;color:var(--g700);letter-spacing:-.3px}
+.ritem .time{white-space:pre;font:500 11px/14px Pretendard;color:var(--g400);letter-spacing:.34px}
+.ritem .no{width:28px;margin-right:-8px;flex:none;font:600 14px/20px Pretendard;color:var(--g400);letter-spacing:-.308px}
 #histList .ritem{height:44px;padding:0 8px 0 16px;border-radius:10px}
 #recent .ritem{height:44px;padding:0 8px 0 16px}   /* 피그마 홈 행 높이 44 */
 #histList{padding-bottom:20px}   /* 피그마 검사 내역 목록 아래 20 */
@@ -143,7 +143,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .ritem .kebab:active{background:var(--g150)}
 .rmenu{position:absolute;z-index:55;display:none;min-width:120px;background:#fff;border-radius:10px;padding:4px;box-shadow:0 4px 16px rgba(15,23,42,.14),0 0 0 1px var(--g150)}
 .rmenu.on{display:block;animation:fade .15s ease}
-.rmenu button{width:100%;height:40px;padding:0 12px;display:flex;align-items:center;gap:8px;border-radius:6px;font:500 14px/1.429 Pretendard;color:var(--coral-70);text-align:left}
+.rmenu button{width:100%;height:40px;padding:0 12px;display:flex;align-items:center;gap:8px;border-radius:6px;font:500 14px/20px Pretendard;color:var(--coral-70);text-align:left}
 .rmenu button:active{background:var(--g100)}
 .btn.danger{background:var(--coral-60);color:#fff}
 .ddel{padding:0 20px 24px}
@@ -156,9 +156,9 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 /* 검사 내역 */
 #history{background:var(--g150)}
 .head{height:48px;flex:none;display:flex;align-items:center;padding:0 20px;gap:8px}
-.head h1{flex:1;font:700 20px/1.4 Pretendard;color:var(--g900)}
+.head h1{flex:1;font:700 20px/28px Pretendard;color:var(--g900)}
 .head .icbtn{width:24px;height:24px;display:flex;align-items:center;justify-content:center}
-.datebar{display:flex;align-items:center;gap:8px;padding:8px 20px;font:600 15px/1.467 Pretendard;color:var(--g600);letter-spacing:-.15px}
+.datebar{display:flex;align-items:center;gap:8px;padding:8px 20px;font:600 15px/22px Pretendard;color:var(--g600);letter-spacing:-.15px}
 .datebar button{display:flex;align-items:center;gap:8px;padding:4px 6px;margin:-4px -6px;border-radius:6px}
 .datebar button:hover{background:rgba(0,0,0,.04)}
 .datebar img{width:16px;height:16px}
@@ -166,8 +166,8 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .datebar .fbtn{width:20px;height:20px;padding:4px;margin:-4px;box-sizing:content-box;justify-content:center;color:var(--g400)}   /* 피그마: 20x20 안에 18px 아이콘, gray/400 */
 .datebar .fbtn svg{display:block}
 .datebar .chip{font:500 12px/1 Pretendard;color:var(--g500);background:#fff;padding:5px 8px;border-radius:999px}
-.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--g400);font:400 15px/1.6 Pretendard;padding:60px 20px;text-align:center}
-.empty b{font:600 16px/1.5 Pretendard;color:var(--g600)}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--g400);font:400 15px/24px Pretendard;padding:60px 20px;text-align:center}
+.empty b{font:600 16px/24px Pretendard;color:var(--g600)}
 
 /* 시트·모달 */
 .dim{position:absolute;inset:0;background:rgba(15,23,42,.45);display:none;z-index:50;align-items:flex-end;justify-content:center}
@@ -176,9 +176,9 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
 .sheet{background:#fff;width:100%;border-radius:20px 20px 0 0;padding:24px 20px 48px;animation:up .25s ease}
 @keyframes up{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
-.sheet h3{font:700 18px/1.4 Pretendard;color:var(--g900);margin-bottom:12px}
+.sheet h3{font:600 18px/28px Pretendard;letter-spacing:-.2826px;color:var(--g900);margin-bottom:12px}   /* subtitle/lg */
 .opts{display:flex;flex-direction:column;gap:0}
-.opts button{display:flex;align-items:center;justify-content:space-between;height:48px;padding:0 12px;border-radius:8px;font:500 15px/1.4 Pretendard;color:var(--g700);text-align:left}
+.opts button{display:flex;align-items:center;justify-content:space-between;height:48px;padding:0 12px;border-radius:8px;font:500 15px/22px Pretendard;color:var(--g700);text-align:left}
 .opts button.on{background:var(--teal-10);color:var(--teal-60);font-weight:600}
 .opts button.on::after{content:"✓";font-weight:700}
 
@@ -189,16 +189,16 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .device.w412 #onboarding h2{margin-top:28px}
 .device.w412 .cal{width:calc(100% - 40px)}   /* 412: 양옆 20 (372) */
 .cal .top{display:flex;align-items:center;gap:6px;margin-bottom:20px}
-.cal .top b{flex:1;font:700 20px/1.4 Pretendard;color:var(--g700)}
+.cal .top b{flex:1;font:700 20px/28px Pretendard;color:var(--g700)}
 .cal .nav{width:32px;height:32px;border-radius:8px;background:var(--g100);display:flex;align-items:center;justify-content:center;flex:none}
 .cal .nav img{width:32px;height:32px;flex:none}
 .cal .grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));row-gap:12px;padding:0 2px;text-align:center}   /* 7칸이 너비를 나눠 가짐 (360 기준 칸 40) */
-.cal .wd{font:500 12px/1.3 Pretendard;color:var(--g500)}
+.cal .wd{font:500 12px/16px Pretendard;color:var(--g500)}
 .cal .wd.sun{color:var(--coral-60)} .cal .wd.sat{color:var(--teal-60)}
 .cal .d{justify-self:center;width:40px;height:24px;border-radius:10px;font:600 16px/24px Pretendard;letter-spacing:.0912px;color:var(--g500)}
 .cal .d.sel{height:40px;margin:-8px 0;line-height:40px;background:var(--teal-60);color:#fff}
 .cal .d.off{color:var(--g300);cursor:default}
-.cal .close{margin-top:20px;width:100%;height:44px;border:1px solid var(--g300);border-radius:12px;background:#fff;font:500 14px/1.429 Pretendard;letter-spacing:.203px;color:var(--g600)}
+.cal .close{margin-top:20px;width:100%;height:44px;border:1px solid var(--g300);border-radius:12px;background:#fff;font:500 14px/20px Pretendard;letter-spacing:.203px;color:var(--g600)}
 
 /* 카메라 */
 #camera{background:#000;color:#fff}
@@ -210,7 +210,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .cambottom{height:44px;flex:none}
 .camhead{height:48px;flex:none;display:flex;align-items:center;padding:0 16px;gap:8px}
 .camhead .info{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px}
-.camhead .title{flex:1;display:flex;justify-content:center;gap:12px;font:700 20px/1.4 Pretendard}
+.camhead .title{flex:1;display:flex;justify-content:center;gap:12px;font:700 20px/28px Pretendard}
 .camhead .title .a{color:var(--g300)} .camhead .title .b{color:var(--g100);font-variant-numeric:tabular-nums}
 .camhead .close{width:36px;height:36px;border-radius:8px;background:var(--g800);display:flex;align-items:center;justify-content:center}
 .camhead img{width:24px;height:24px}
@@ -221,19 +221,19 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .corner.tr{right:-1px;top:-1px;border-right-width:5px;border-top-width:5px}
 .corner.bl{left:-1px;bottom:-1px;border-left-width:5px;border-bottom-width:5px}
 .corner.br{right:-1px;bottom:-1px;border-right-width:5px;border-bottom-width:5px}
-.toast{position:relative;z-index:3;background:rgba(0,0,0,.9);border:1px solid var(--g800);border-radius:8px;padding:4px 12px;font:500 14px/1.429 Pretendard;color:var(--g200);letter-spacing:.2px}
+.toast{position:relative;z-index:3;background:rgba(0,0,0,.9);border:1px solid var(--g800);border-radius:8px;padding:4px 12px;font:500 14px/20px Pretendard;color:var(--g200);letter-spacing:.2px}
 .rec{position:absolute;left:14px;top:12px;z-index:3;display:none;align-items:center;gap:6px;font:600 12px/1 Pretendard;color:#fff;background:rgba(0,0,0,.5);padding:5px 8px;border-radius:6px}
 .rec i{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:blink 1s infinite}
 .rec.on{display:flex}
 @keyframes blink{50%{opacity:.25}}
 .shoot{position:relative;z-index:3;margin-top:auto;width:200px;border-radius:12px}
 .modal{background:#faf9f6;border-radius:16px;padding:20px;width:448px;color:var(--g900)}
-.modal h3{font:700 20px/1.4 Pretendard;margin-bottom:16px}
-.modal p{font:400 15px/1.6 Pretendard;color:var(--g700);margin-bottom:16px}
+.modal h3{font:700 20px/28px Pretendard;margin-bottom:16px}
+.modal p{font:400 15px/24px Pretendard;color:var(--g700);margin-bottom:16px}
 .modal .stack{display:flex;flex-direction:column;gap:4px}
 .modal .stack .btn{border:1px solid var(--g700);background:#fff;color:var(--g700);font-weight:400}
 .modal ol{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.modal li{display:flex;align-items:center;gap:10px;font:400 15px/1.6 Pretendard;color:var(--g700)}
+.modal li{display:flex;align-items:center;gap:10px;font:400 15px/24px Pretendard;color:var(--g700)}
 .modal li i{width:20px;height:20px;border-radius:5px;background:var(--g900);color:#fff;font:600 13px/20px Pretendard;text-align:center;font-style:normal;flex:none}
 .modal.port{width:300px}
 /* 안드로이드 시스템 권한 창 (Material 3) */
@@ -284,10 +284,10 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .ld-scanline::after{top:2px;background:linear-gradient(to bottom,rgba(10,160,165,.16),rgba(10,160,165,0));animation:ldTrailUp var(--ld-scan) linear infinite}
 @keyframes ldTrailDown{0%,42%{opacity:1}48%,97%{opacity:0}100%{opacity:1}}
 @keyframes ldTrailUp{0%,47%{opacity:0}53%,92%{opacity:1}98%,100%{opacity:0}}
-#loading h2{font:700 20px/1.4 Pretendard;color:var(--g700)}
-#loading .sub{font:400 15px/1.6 Pretendard;color:var(--g400);letter-spacing:-.3px;margin-top:6px}
+#loading h2{font:700 20px/28px Pretendard;color:var(--g700)}
+#loading .sub{font:400 15px/24px Pretendard;color:var(--g400);letter-spacing:-.3px;margin-top:6px}
 #loading .steps{display:flex;flex-direction:column;gap:8px;width:calc(100% - 128px);margin-top:44px}   /* 좌우 64 (360: 232, 412: 284) */
-#loading .step{background:var(--g50);border-radius:12px;padding:12px;display:flex;align-items:center;gap:6px;font:400 15px/1.6 Pretendard;color:var(--g600);letter-spacing:-.3px}
+#loading .step{background:var(--g50);border-radius:12px;padding:12px;display:flex;align-items:center;gap:6px;font:400 15px/24px Pretendard;color:var(--g600);letter-spacing:-.3px}
 #loading .step .spin{width:24px;height:24px;flex:none;display:block}
 #loading .step .spin svg{display:block}
 #loading .step.run .spin{animation:rot 1s linear infinite}
@@ -312,8 +312,8 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .bagtitle span{flex:none} .bagtitle em{flex:1;font-style:normal;color:var(--g400)}
 .sum{display:flex;gap:8px}
 .sum .box{flex:1;background:#fff;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:2px}
-.sum .lab{font:600 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.3px}
-.sum .val{font:600 20px/1.4 Pretendard;letter-spacing:-.44px;color:var(--g600);display:flex;gap:2px}
+.sum .lab{font:600 14px/20px Pretendard;color:var(--g400);letter-spacing:-.3px}
+.sum .val{font:600 20px/28px Pretendard;letter-spacing:-.44px;color:var(--g600);display:flex;gap:2px}
 .sum .val .ok{color:var(--teal-60)} .sum .val .err{color:var(--coral-60)} .sum .val .fail{color:var(--g500)}
 .player{position:relative;aspect-ratio:4/3;border:1px solid var(--g300);border-radius:12px;overflow:hidden;background:var(--g800)}
 .player video{position:absolute;left:50%;top:50%;width:320px;height:320px;object-fit:cover;transform:translate(-50%,-50%) rotate(-90deg)}
@@ -328,8 +328,8 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .track .fill{position:absolute;left:0;top:0;bottom:0;background:#fff;border-radius:2px}
 .track .mark{position:absolute;top:-2px;height:8px;border-radius:2px;background:rgb(var(--alert))}
 .player .full{font-size:16px}
-.when{background:#fff;border-radius:12px;height:48px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;font:400 14px/1.571 Pretendard;letter-spacing:-.28px}
-.when span:first-child{font:600 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.3px} .when span:last-child{color:var(--g700);white-space:pre}
+.when{background:#fff;border-radius:12px;height:48px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;font:400 14px/22px Pretendard;letter-spacing:-.28px}
+.when span:first-child{font:600 14px/20px Pretendard;color:var(--g400);letter-spacing:-.3px} .when span:last-child{color:var(--g700);white-space:pre}
 .bags{display:flex;flex-direction:column;gap:8px;padding:0 20px 20px}
 .byp .bags{gap:10px}   /* 분석 결과 환자 카드 사이 10 */
 #detail.byp .bags{padding-bottom:20px}
@@ -343,8 +343,8 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .btn.more{background:#fff;color:var(--g600);border:1px solid var(--g300);border-radius:12px;gap:6px}
 .btn.more svg{color:var(--teal-60);flex:none;width:20px;height:20px}   /* Boxicons bxs-camera */
 .bag{background:#fff;border:1px solid transparent;border-radius:12px;height:48px;padding:0 16px;display:flex;align-items:center;gap:8px;text-align:left;width:100%;transition:background .2s,border-color .2s}
-.bag .n{flex:1;font:600 14px/1.429 Pretendard;color:var(--g700);letter-spacing:-.3px}
-.bag .why{display:block;font:500 13px/1.385 Pretendard;letter-spacing:.25px}
+.bag .n{flex:1;font:600 14px/20px Pretendard;color:var(--g700);letter-spacing:-.3px}
+.bag .why{display:block;font:500 13px/18px Pretendard;letter-spacing:.25px}
 .bag.errbag{height:60px;background:#fff7f6;border-color:#faaca2}
 .bag.errbag .why{color:var(--coral-60)}
 .bag.failbag{height:56px;background:var(--g50);border-color:var(--g400)}
@@ -352,7 +352,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .bag.live{background:#ffeceb;border-color:var(--coral-60)}
 .patient{background:#fff;border-radius:12px;overflow:hidden}
 .phead{width:100%;min-height:52px;padding:10px 12px;display:flex;align-items:center;gap:8px;text-align:left}
-.phead .pname{font:600 14px/1.429 Pretendard;color:var(--g700);letter-spacing:-.308px}   /* subtitle/sm */
+.phead .pname{font:600 14px/20px Pretendard;color:var(--g700);letter-spacing:-.308px}   /* subtitle/sm */
 .sico{flex:none} .sico.ok circle:first-child{fill:var(--teal-60)} .sico.err circle:first-child{fill:var(--coral-60)} .sico.fail circle:first-child{fill:var(--g400)}
 #detail #player{display:none}   /* 영상은 어느 화면에서도 보이지 않음 */
 .dpouch{display:none;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;border:1px solid var(--g300);background:var(--g200)}
@@ -361,10 +361,10 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .phead .pava{width:28px;height:28px;border-radius:50%;flex:none;object-fit:cover}
 .phead .ptxt{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
 .nophoto{width:100%;aspect-ratio:4/3;border-radius:12px;background:var(--g200);border:1px solid var(--g200);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--g300)}   /* 사진이 없을 때 */
-.nophoto span{font:500 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.28px}
+.nophoto span{font:500 14px/20px Pretendard;color:var(--g400);letter-spacing:-.28px}
 #dNoPhoto{display:none;border-radius:12px}
 #detail:not(.byp).nopic #dNoPhoto{display:flex} #detail:not(.byp).nopic .dpouch{display:none}
-.phead .psub{font:500 13px/1.385 Pretendard;color:var(--g400);letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}   /* 복약 패턴, 실패면 실패 사유 */
+.phead .psub{font:500 13px/18px Pretendard;color:var(--g400);letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}   /* 복약 패턴, 실패면 실패 사유 */
 .when .miss{color:var(--g400)!important}
 .phead .chev{width:16px;height:16px;transform:rotate(90deg);transition:transform .2s}
 .patient.open .phead .chev{transform:rotate(-90deg)}
@@ -373,7 +373,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .pbody > div{overflow:hidden;display:flex;flex-direction:column;gap:12px;padding:0 12px}
 .patient.open .pbody > div{padding-bottom:12px}
 .patient .bag:not(.errbag):not(.failbag):not(.live){background:var(--g100)}
-.hint{font:400 12px/1.5 Pretendard;color:var(--g400);padding:0 2px}
+.hint{font:400 12px/18px Pretendard;color:var(--g400);padding:0 2px}
 
 /* 크게 보기 (가로) */
 #replay{background:#000;color:#fff}
@@ -382,7 +382,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 #replay .vflash.on{animation:alertblink .55s ease-in-out infinite alternate}
 #replay .screenflash{position:absolute;inset:0;pointer-events:none;z-index:20;opacity:0;background:rgba(var(--alert),.12)}
 #replay .screenflash.on{animation:alertblink .55s ease-in-out infinite alternate}
-#replay .alertmsg{position:relative;z-index:3;display:none;align-items:center;gap:8px;background:rgb(var(--alert));color:#fff;font:600 14px/1.4 Pretendard;padding:6px 12px;border-radius:8px}
+#replay .alertmsg{position:relative;z-index:3;display:none;align-items:center;gap:8px;background:rgb(var(--alert));color:#fff;font:600 14px/20px Pretendard;padding:6px 12px;border-radius:8px}
 #replay .alertmsg.on{display:flex}
 #replay .ctrl{position:relative;z-index:3;margin-top:auto;width:92%;display:flex;align-items:center;gap:10px}
 #replay .ctrl button{color:#fff;font-size:16px;width:28px;height:28px}
@@ -390,20 +390,20 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 /* 오류 통계 · 설정 */
 #stats,#settings{background:var(--g150)}
 .backhead{height:48px;flex:none;display:flex;align-items:center;gap:8px;padding:0 20px 0 16px;background:#fff}
-.backhead h1{flex:1;font:700 20px/1.4 Pretendard;color:var(--g900)}
+.backhead h1{flex:1;font:700 20px/28px Pretendard;color:var(--g900)}
 .backhead button img{filter:invert(1) brightness(.2)}
 .statgrid{display:flex;gap:8px;padding:0 20px}
 .statgrid .box{flex:1;background:#fff;border-radius:12px;padding:14px 16px}
-.statgrid .lab{font:600 13px/1.4 Pretendard;color:var(--g400)}
-.statgrid .val{font:700 20px/1.4 Pretendard;color:var(--g700)}
+.statgrid .lab{font:600 13px/18px Pretendard;color:var(--g400)}
+.statgrid .val{font:700 20px/28px Pretendard;color:var(--g700)}
 .statgrid .val.err{color:var(--coral-70)}
 .setlist{background:#fff;border-radius:12px;margin:12px 20px;overflow:hidden}
-.setlist button{display:flex;width:100%;align-items:center;justify-content:space-between;padding:16px;font:500 15px/1.4 Pretendard;color:var(--g700);text-align:left;border-bottom:1px solid var(--g150)}
+.setlist button{display:flex;width:100%;align-items:center;justify-content:space-between;padding:16px;font:500 15px/22px Pretendard;color:var(--g700);text-align:left;border-bottom:1px solid var(--g150)}
 .setlist button:last-child{border-bottom:0}
 .setlist small{font:400 13px Pretendard;color:var(--g400)}
 
 /* 화면 이동 메뉴 */
-.jump{position:fixed;right:16px;top:16px;background:#fff;border-radius:12px;padding:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);font:500 12px/1.4 Pretendard;color:var(--g600);display:flex;flex-direction:column;gap:2px;max-width:170px}
+.jump{position:fixed;right:16px;top:16px;background:#fff;border-radius:12px;padding:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);font:500 12px/16px Pretendard;color:var(--g600);display:flex;flex-direction:column;gap:2px;max-width:170px}
 .jump b{font:700 12px Pretendard;color:var(--g800);padding:2px 6px 6px}
 .jump button{text-align:left;padding:5px 6px;border-radius:6px}
 .jump button:hover{background:var(--g100)}
