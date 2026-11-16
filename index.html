@@ -150,6 +150,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .btn.delbtn{border:1px solid var(--g300);background:#fff;color:var(--coral-60)}   /* 피그마 secondary */
 #detail.byp .ddel{display:none}
 #detail.byp #dPatRow{display:none}   /* 분석 결과는 환자 카드마다 복약 패턴을 보여 줌 */
+#detail.fail #dPatRow{display:none}   /* 실패 기록은 아래 「검사 실패」 봉지 행에 사유가 나오므로 뺀다 */
 .ritem.new{animation:newrow 1.6s ease}
 @keyframes newrow{0%{box-shadow:0 0 0 2px var(--teal-60)}100%{box-shadow:0 0 0 2px transparent}}
 
