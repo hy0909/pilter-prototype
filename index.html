@@ -231,7 +231,6 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .shoot{position:relative;z-index:3;margin-top:auto;width:200px;border-radius:12px}
 /* 모달 (피그마 카메라 권한 확인 · 촬영 가이드) */
 .modal{background:#faf9f6;border-radius:16px;padding:20px 20px 16px;width:calc(100% - 192px);color:var(--g900)}   /* 가로 화면 양옆 96 고정 (360: 448, 412: 723) */
-.modal.perm{background:#fff}
 .modal h3{display:flex;align-items:center;gap:4px;font:600 18px/28px Pretendard;letter-spacing:-.2826px;color:var(--g900);margin-bottom:20px}   /* subtitle/lg */
 .modal h3 .x{margin-left:auto;width:24px;height:24px;flex:none;display:flex;align-items:center;justify-content:center;color:var(--g500)}
 .modal p{font:400 16px/26px Pretendard;letter-spacing:-.2512px;color:var(--g700);margin-bottom:16px}   /* body/lg */
@@ -242,6 +241,18 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .modal li{display:flex;align-items:center;gap:8px;font:400 16px/26px Pretendard;letter-spacing:-.2512px;color:var(--g700)}
 .modal li i{width:20px;height:20px;border-radius:6px;background:var(--g900);color:#fff;font:500 13px/18px Pretendard;letter-spacing:.252px;display:flex;align-items:center;justify-content:center;font-style:normal;flex:none}
 .modal.port{width:300px}
+/* 안드로이드 시스템 권한 창 (Material 3) */
+.sysdim{background:rgba(0,0,0,.32)}
+.sysdlg{width:312px;background:#eceff3;border-radius:28px;padding:20px 20px 18px;display:flex;flex-direction:column;align-items:center;font-family:Roboto,'Noto Sans KR',Pretendard,sans-serif;color:#191c20;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:sysin .2s ease}
+@keyframes sysin{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+.sysic{color:#3a5f7f;margin-bottom:12px}
+.systxt{word-break:keep-all;font-size:16px;line-height:1.45;text-align:center;letter-spacing:-.1px;margin-bottom:16px;padding:0 4px}
+.systxt b{font-weight:700}
+.sysbtns{width:100%;display:flex;flex-direction:column;gap:3px}
+.sysbtns button{height:44px;background:#d5e0ea;color:#0f1d29;font-size:14px;font-weight:500;border-radius:5px;letter-spacing:.1px}
+.sysbtns button:first-child{border-radius:20px 20px 5px 5px}
+.sysbtns button:last-child{border-radius:5px 5px 20px 20px}
+.sysbtns button:active{background:#c4d2df}
 .field{width:100%;height:44px;border:1px solid var(--g300);border-radius:8px;padding:0 12px;font:400 15px Pretendard;color:var(--g700);margin-bottom:16px;background:#fff}
 .row2{display:flex;gap:8px}
 
@@ -557,13 +568,13 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
       </div>
     </div>
     <div class="cambottom"></div>
-    <div class="dim center" id="permDim"><div class="modal perm" role="dialog" aria-labelledby="permTitle">
-      <h3 id="permTitle">카메라 권한 확인</h3>
-      <p>필터(Pilter)에서 사진 및 동영상을 촬영하도록 허용할까요?</p>
-      <div class="stack">
-        <button class="btn tap" data-perm="allow">앱 사용 중에만 허용</button>
-        <button class="btn tap" data-perm="deny">허용 안 함</button>
-        <button class="btn tap" data-perm="once">이번만 허용</button>
+    <div class="dim center sysdim" id="permDim"><div class="sysdlg" role="dialog" aria-label="카메라 권한 확인">
+      <svg class="sysic" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9.4 4 7.6 6H4.5A2.5 2.5 0 0 0 2 8.5v10A2.5 2.5 0 0 0 4.5 21h15a2.5 2.5 0 0 0 2.5-2.5v-10A2.5 2.5 0 0 0 19.5 6h-3.1l-1.8-2H9.4ZM12 9a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Zm0 2a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z"/></svg>
+      <p class="systxt"><b>필터(Pilter)</b>에서 사진 및 동영상을 촬영하도록 허용할까요?</p>
+      <div class="sysbtns">
+        <button data-perm="allow">앱 사용 중에만 허용</button>
+        <button data-perm="deny">허용 안 함</button>
+        <button data-perm="once">이번만 허용</button>
       </div>
     </div></div>
     <div class="dim center" id="guideDim" data-dimclose="#guideOk"><div class="modal" role="dialog" aria-labelledby="guideTitle">
