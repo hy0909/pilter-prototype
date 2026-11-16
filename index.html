@@ -60,7 +60,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 #splash .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:40px}
 #splash .logo{width:111px;height:142px;object-fit:cover;margin-bottom:-4px}
 #splash .word{font:400 32px/1.313 'Readex Pro';color:#078185;letter-spacing:-.8px}
-#splash .copy{font:600 24px/1.333 Pretendard;letter-spacing:-.552px;text-align:center;color:#1e293b}
+#splash .copy{font:700 24px/1.333 Pretendard;letter-spacing:-.552px;text-align:center;color:#1e293b}
 #splash .copy b{color:#078185;font-weight:600}
 #splash .fade{animation:fade .6s ease both}
 /* 문구는 위로 올라가며 사라지고, 로고와 글자는 차례로 아래에서 살짝 올라옴 */
@@ -78,8 +78,8 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 #onboarding .ill svg{display:block}
 #onboarding .ill .lot{position:absolute;inset:0}
 #onboarding .ill .lot.swap{animation:fade .35s ease both}
-#onboarding h2{font:600 20px/1.4 Pretendard;color:var(--g700);margin-top:20px;text-align:center}
-#onboarding .dots{width:40px;height:8px;margin-top:auto;margin-bottom:0}
+#onboarding h2{font:700 20px/1.4 Pretendard;color:var(--g700);margin-top:20px;text-align:center}
+#onboarding .dots{width:40px;height:8px;margin-top:auto;margin-bottom:16px}   /* 점~버튼 32 (피그마 360·412 공통) */
 #onboarding .foot{padding:16px 20px 40px;display:flex;flex-direction:column;gap:8px;background:#fff}
 
 /* 홈 */
@@ -147,7 +147,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .rmenu button:active{background:var(--g100)}
 .btn.danger{background:var(--coral-60);color:#fff}
 .ddel{padding:0 20px 24px}
-.btn.delbtn{border:1px solid var(--g300);background:#fff;color:var(--coral-70)}
+.btn.delbtn{border:1px solid var(--g300);background:#fff;color:var(--coral-60)}   /* 피그마 secondary */
 #detail.byp .ddel{display:none}
 #detail.byp #dPatRow{display:none}   /* 분석 결과는 환자 카드마다 복약 패턴을 보여 줌 */
 .ritem.new{animation:newrow 1.6s ease}
@@ -184,6 +184,10 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 
 /* 캘린더 (피그마 calendar 컴포넌트) */
 .cal{background:#fff;border-radius:16px;padding:20px;width:calc(100% - 36px)}   /* 화면 양옆 18 (360 기준 324) */
+/* 최대(412x915) 피그마 값 */
+.device.w412 #onboarding .ill{aspect-ratio:auto;height:387px}
+.device.w412 #onboarding h2{margin-top:28px}
+.device.w412 .cal{width:calc(100% - 40px)}   /* 412: 양옆 20 (372) */
 .cal .top{display:flex;align-items:center;gap:6px;margin-bottom:20px}
 .cal .top b{flex:1;font:700 20px/1.4 Pretendard;color:var(--g700)}
 .cal .nav{width:32px;height:32px;border-radius:8px;background:var(--g100);display:flex;align-items:center;justify-content:center;flex:none}
@@ -222,7 +226,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .rec i{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:blink 1s infinite}
 .rec.on{display:flex}
 @keyframes blink{50%{opacity:.25}}
-.shoot{position:relative;z-index:3;margin-top:auto;width:200px}
+.shoot{position:relative;z-index:3;margin-top:auto;width:200px;border-radius:12px}
 .modal{background:#faf9f6;border-radius:16px;padding:20px;width:448px;color:var(--g900)}
 .modal h3{font:700 20px/1.4 Pretendard;margin-bottom:16px}
 .modal p{font:400 15px/1.6 Pretendard;color:var(--g700);margin-bottom:16px}
@@ -282,7 +286,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 @keyframes ldTrailUp{0%,47%{opacity:0}53%,92%{opacity:1}98%,100%{opacity:0}}
 #loading h2{font:700 20px/1.4 Pretendard;color:var(--g700)}
 #loading .sub{font:400 15px/1.6 Pretendard;color:var(--g400);letter-spacing:-.3px;margin-top:6px}
-#loading .steps{display:flex;flex-direction:column;gap:8px;width:232px;margin-top:44px}
+#loading .steps{display:flex;flex-direction:column;gap:8px;width:calc(100% - 128px);margin-top:44px}   /* 좌우 64 (360: 232, 412: 284) */
 #loading .step{background:var(--g50);border-radius:12px;padding:12px;display:flex;align-items:center;gap:6px;font:400 15px/1.6 Pretendard;color:var(--g600);letter-spacing:-.3px}
 #loading .step .spin{width:24px;height:24px;flex:none;display:block}
 #loading .step .spin svg{display:block}
@@ -327,6 +331,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .when{background:#fff;border-radius:12px;height:48px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;font:400 14px/1.571 Pretendard;letter-spacing:-.28px}
 .when span:first-child{font:600 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.3px} .when span:last-child{color:var(--g700);white-space:pre}
 .bags{display:flex;flex-direction:column;gap:8px;padding:0 20px 20px}
+.byp .bags{gap:10px}   /* 분석 결과 환자 카드 사이 10 */
 #detail.byp .bags{padding-bottom:20px}
 /* 분석 결과: 헤더 오른쪽 X(홈으로) + 하단 고정 '추가 검사' 하나 */
 #detail .dx,#detail .dfoot{display:none}
@@ -335,8 +340,8 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 #detail.byp .bar h1{margin-right:0;margin-left:32px}
 #detail.byp .dfoot{display:block;flex:none;padding:16px 20px 40px;background:#fff}   /* 아래 24px는 안드로이드 제스처 내비게이션 영역 (하단 탭과 같음) */
 #detail.byp .dfoot{border-top:1px solid var(--g200)}
-.btn.more{background:#fff;color:var(--g800);border:1px solid var(--g300);gap:6px}
-.btn.more svg{color:var(--teal-60);flex:none}   /* Boxicons bxs-camera */
+.btn.more{background:#fff;color:var(--g600);border:1px solid var(--g300);border-radius:12px;gap:6px}
+.btn.more svg{color:var(--teal-60);flex:none;width:20px;height:20px}   /* Boxicons bxs-camera */
 .bag{background:#fff;border:1px solid transparent;border-radius:12px;height:48px;padding:0 16px;display:flex;align-items:center;gap:8px;text-align:left;width:100%;transition:background .2s,border-color .2s}
 .bag .n{flex:1;font:600 14px/1.429 Pretendard;color:var(--g700);letter-spacing:-.3px}
 .bag .why{display:block;font:500 13px/1.385 Pretendard;letter-spacing:.25px}
@@ -346,26 +351,26 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .bag.failbag .why{color:var(--g400)}
 .bag.live{background:#ffeceb;border-color:var(--coral-60)}
 .patient{background:#fff;border-radius:12px;overflow:hidden}
-.phead{width:100%;min-height:52px;padding:10px 12px 10px 16px;display:flex;align-items:center;gap:8px;text-align:left}
-.phead .pname{font:600 15px/1.467 Pretendard;color:var(--g700);letter-spacing:-.15px}
+.phead{width:100%;min-height:52px;padding:10px 12px;display:flex;align-items:center;gap:8px;text-align:left}
+.phead .pname{font:600 14px/1.429 Pretendard;color:var(--g700);letter-spacing:-.308px}   /* subtitle/sm */
 .sico{flex:none} .sico.ok circle:first-child{fill:var(--teal-60)} .sico.err circle:first-child{fill:var(--coral-60)} .sico.fail circle:first-child{fill:var(--g400)}
 #detail #player{display:none}   /* 영상은 어느 화면에서도 보이지 않음 */
 .dpouch{display:none;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;border:1px solid var(--g300);background:var(--g200)}
 #detail:not(.byp) .dpouch{display:block}   /* 검사 상세: 약봉지 이미지 한 장 */
-.pouch{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;background:var(--g200)}
-.phead .pava{width:32px;height:32px;border-radius:50%;flex:none;object-fit:cover}
+.pouch{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;border:1px solid var(--g300);background:var(--g200)}
+.phead .pava{width:28px;height:28px;border-radius:50%;flex:none;object-fit:cover}
 .phead .ptxt{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
-.nophoto{width:100%;aspect-ratio:4/3;border-radius:10px;background:var(--g100);border:1px solid var(--g200);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--g300)}   /* 사진이 없을 때 */
+.nophoto{width:100%;aspect-ratio:4/3;border-radius:12px;background:var(--g200);border:1px solid var(--g200);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--g300)}   /* 사진이 없을 때 */
 .nophoto span{font:500 14px/1.429 Pretendard;color:var(--g400);letter-spacing:-.28px}
 #dNoPhoto{display:none;border-radius:12px}
 #detail:not(.byp).nopic #dNoPhoto{display:flex} #detail:not(.byp).nopic .dpouch{display:none}
 .phead .psub{font:500 13px/1.385 Pretendard;color:var(--g400);letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}   /* 복약 패턴, 실패면 실패 사유 */
 .when .miss{color:var(--g400)!important}
-.phead .chev{width:20px;height:20px;transform:rotate(90deg);transition:transform .2s}
+.phead .chev{width:16px;height:16px;transform:rotate(90deg);transition:transform .2s}
 .patient.open .phead .chev{transform:rotate(-90deg)}
 .pbody{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}
 .patient.open .pbody{grid-template-rows:1fr}
-.pbody > div{overflow:hidden;display:flex;flex-direction:column;gap:8px;padding:0 12px}
+.pbody > div{overflow:hidden;display:flex;flex-direction:column;gap:12px;padding:0 12px}
 .patient.open .pbody > div{padding-bottom:12px}
 .patient .bag:not(.errbag):not(.failbag):not(.live){background:var(--g100)}
 .hint{font:400 12px/1.5 Pretendard;color:var(--g400);padding:0 2px}
@@ -402,6 +407,9 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .jump b{font:700 12px Pretendard;color:var(--g800);padding:2px 6px 6px}
 .jump button{text-align:left;padding:5px 6px;border-radius:6px}
 .jump button:hover{background:var(--g100)}
+.jump .dwsel{display:flex;gap:4px;margin-bottom:8px}
+.jump .dwsel button{flex:1;text-align:center;border:1px solid var(--g200)}
+.jump .dwsel button.on{background:var(--teal-10);border-color:var(--teal-60);color:var(--teal-80);font-weight:600}
 @media (max-width:900px){.jump{display:none}}
 </style>
 </head>
@@ -674,6 +682,8 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 </div></div>
 
 <nav class="jump">
+  <b>화면 크기</b>
+  <div class="dwsel"><button data-dw="360" class="on">최소 360</button><button data-dw="412">최대 412</button></div>
   <b>화면 바로가기</b>
   <button data-jump="splash">스플래시</button>
   <button data-jump="onboarding">온보딩</button>
@@ -1223,6 +1233,8 @@ document.querySelectorAll('[data-jump]').forEach(b => b.onclick = () => {
 document.querySelectorAll('[data-dw]').forEach(b => b.onclick = () => {
   const big = b.dataset.dw === '412';
   device.style.setProperty('--dw', big ? '412px' : '360px');
+  device.classList.toggle('w412', big);
+  document.querySelectorAll('[data-dw]').forEach(x => x.classList.toggle('on', x === b));
   device.style.setProperty('--dh', big ? '915px' : '640px');
   setTimeout(fit, 380);
 });
