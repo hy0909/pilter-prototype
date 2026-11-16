@@ -191,13 +191,9 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .cal .wd{font:500 12px/1 Pretendard;color:var(--g500);padding-bottom:12px}
 .cal .wd.sun{color:var(--coral-60)} .cal .wd.sat{color:var(--teal-60)}
 .cal .d{height:36px;width:40px;margin:0 auto;border-radius:8px;font:600 16px/36px Pretendard;color:var(--g500);position:relative}
-.cal .d.has::after{content:"";position:absolute;left:50%;bottom:3px;width:4px;height:4px;border-radius:50%;background:var(--teal-60);transform:translateX(-50%)}
-.cal .d.haserr::after{background:var(--coral-60)}
 .cal .d.sel{background:var(--teal-60);color:#fff}
-.cal .d.sel::after{background:#fff}
-.cal .d.today:not(.sel){color:var(--teal-60)}
-.cal .d.future{color:var(--g300);cursor:default}
-.cal .d:not(.future):not(.sel):hover{background:var(--g100)}
+.cal .d.off{color:var(--g300);cursor:default}
+.cal .d:not(.off):not(.sel):hover{background:var(--g100)}
 
 /* 카메라 */
 #camera{background:#000;color:#fff}
@@ -920,9 +916,9 @@ function openCal(el, selected, onPick){
     for (let i=0;i<first;i++) cells += '<div></div>';
     for (let d=1; d<=days; d++){
       const dt = new Date(y, mo, d); const recs = recordsOf(dt);
-      const fut = dt > TODAY;
-      const cls = ['d', fut?'future':'', sameDay(dt,selected)?'sel':'', sameDay(dt,TODAY)?'today':'', recs.length?'has':'', recs.some(r=>r.status==='err')?'haserr':''].join(' ');
-      cells += `<button class="${cls}" data-day="${d}" ${fut?'disabled':''}>${d}</button>`;
+      const sel = sameDay(dt,selected), off = !recs.length && !sel;
+      const cls = ['d', sel?'sel':'', off?'off':''].join(' ');
+      cells += `<button class="${cls}" data-day="${d}" ${off?'disabled':''}>${d}</button>`;
     }
     const canNext = new Date(y, mo+1, 1) <= TODAY;
     el.innerHTML = `<div class="top"><b>${y}년 ${mo+1}월</b><button class="nav" data-m="-1">‹</button><button class="nav" data-m="1" ${canNext?'':'disabled style="opacity:.4"'}>›</button></div><div class="grid">${cells}</div>`;
