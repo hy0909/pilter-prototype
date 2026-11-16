@@ -183,18 +183,18 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .opts button.on::after{content:"✓";font-weight:700}
 
 /* 캘린더 (피그마 calendar 컴포넌트) */
-.cal{background:#fff;border-radius:16px;padding:20px 18px 16px;width:324px}
-.cal .top{display:flex;align-items:center;margin-bottom:22px}
-.cal .top b{flex:1;font:700 20px/1.4 Pretendard;color:var(--g900)}
-.cal .nav{width:32px;height:32px;border-radius:8px;background:var(--g100);display:flex;align-items:center;justify-content:center;margin-left:6px;color:var(--g400);font-size:18px}
+.cal{background:#fff;border-radius:16px;padding:20px;width:324px}
+.cal .top{display:flex;align-items:center;gap:6px;margin-bottom:20px}
+.cal .top b{flex:1;font:700 20px/1.4 Pretendard;color:var(--g700)}
+.cal .nav{width:32px;height:32px;border-radius:8px;background:var(--g100);display:flex;align-items:center;justify-content:center;flex:none}
 .cal .nav img{width:32px;height:32px;flex:none}
-.cal .grid{display:grid;grid-template-columns:repeat(7,1fr);row-gap:4px;text-align:center}
-.cal .wd{font:500 12px/1 Pretendard;color:var(--g500);padding-bottom:12px}
+.cal .grid{display:grid;grid-template-columns:repeat(7,1fr);column-gap:20px;row-gap:12px;padding:0 12px;text-align:center}
+.cal .wd{font:500 12px/1.3 Pretendard;color:var(--g500)}
 .cal .wd.sun{color:var(--coral-60)} .cal .wd.sat{color:var(--teal-60)}
-.cal .d{height:36px;width:40px;margin:0 auto;border-radius:8px;font:600 16px/36px Pretendard;color:var(--g500);position:relative}
-.cal .d.sel{background:var(--teal-60);color:#fff}
+.cal .d{justify-self:center;width:40px;height:24px;border-radius:10px;font:600 16px/24px Pretendard;letter-spacing:.0912px;color:var(--g500)}
+.cal .d.sel{height:40px;margin:-8px 0;line-height:40px;background:var(--teal-60);color:#fff}
 .cal .d.off{color:var(--g300);cursor:default}
-.cal .d:not(.off):not(.sel):hover{background:var(--g100)}
+.cal .close{margin-top:20px;width:100%;height:44px;border:1px solid var(--g300);border-radius:12px;background:#fff;font:500 14px/1.429 Pretendard;letter-spacing:.203px;color:var(--g600)}
 
 /* 카메라 */
 #camera{background:#000;color:#fff}
@@ -564,7 +564,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
         <button data-perm="once">이번만 허용</button>
       </div>
     </div></div>
-    <div class="dim center" id="guideDim"><div class="modal">
+    <div class="dim center" id="guideDim" data-dimclose="#guideOk"><div class="modal">
       <h3>촬영 가이드</h3>
       <ol>
         <li><i>1</i>약봉지 1개가 모두 보이도록 가이드 영역 안에 맞춰 주세요.</li>
@@ -573,12 +573,12 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
       </ol>
       <button class="btn primary tap" id="guideOk">확인</button>
     </div></div>
-    <div class="dim center" id="exitDim"><div class="modal" role="dialog" aria-labelledby="exitTitle">
+    <div class="dim center" id="exitDim" data-dimclose="#exitNo"><div class="modal" role="dialog" aria-labelledby="exitTitle">
       <h3 id="exitTitle">검사를 그만두고 나갈까요?</h3>
       <p>지금 나가면 검사 결과가 저장되지 않아요.</p>
       <div class="row2"><button class="btn danger tap" id="exitYes">나가기</button><button class="btn primary tap" id="exitNo">계속 검사하기</button></div>
     </div></div>
-    <div class="dim center" id="denyDim"><div class="modal">
+    <div class="dim center" id="denyDim" data-dimclose="#denyHome"><div class="modal">
       <h3>카메라를 쓸 수 없어요</h3>
       <p>검사하려면 카메라 권한이 필요해요. 설정에서 권한을 허용해 주세요.</p>
       <div class="row2"><button class="btn line tap" id="denyHome">홈으로</button><button class="btn primary tap" id="denyRetry">다시 요청</button></div>
@@ -658,7 +658,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
   <!-- 공용 시트 -->
   <div class="dim" id="sheetDim"><div class="sheet" id="sheet"></div></div>
   <div class="dim center" id="calDim"><div class="cal" id="histCal"></div></div>
-  <div class="dim center" id="serverDim"><div class="modal port">
+  <div class="dim center" id="serverDim" data-dimclose="#serverCancel"><div class="modal port">
     <h3>서버 주소</h3>
     <input class="field" id="serverInput" value="https://xxxx.ngrok-free.app">
     <div class="row2"><button class="btn line tap" id="serverCancel">취소</button><button class="btn primary tap" id="serverSave">저장</button></div>
@@ -666,7 +666,7 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
   <!-- 목록 더보기 메뉴 -->
   <div class="rmenu" id="rMenu" role="menu"><button id="rMenuDel" role="menuitem"><span class="ti"></span>삭제</button></div>
   <!-- 삭제 확인 -->
-  <div class="dim center" id="delDim"><div class="modal port" role="dialog" aria-labelledby="delTitle">
+  <div class="dim center" id="delDim" data-dimclose="#delNo"><div class="modal port" role="dialog" aria-labelledby="delTitle">
     <h3 id="delTitle">검사 기록을 삭제할까요?</h3>
     <p>삭제한 기록은 다시 되돌릴 수 없어요.</p>
     <div class="row2"><button class="btn line tap" id="delNo">취소</button><button class="btn danger tap" id="delYes">삭제</button></div>
@@ -895,7 +895,10 @@ function renderHistory(){
     : `<div class="empty"><b>${all.length? '조건에 맞는 검사가 없어요' : '이 날짜에는 검사 기록이 없어요'}</b>${all.length?'필터를 바꿔 보세요':'날짜를 눌러 다른 날을 골라 보세요'}</div>`;
 }
 $('#todayBtn').onclick = () => { histDate = new Date(TODAY); renderHistory(); };
-$('#dateBtn').onclick = () => { openCal($('#histCal'), histDate, d => { histDate = d; $('#calDim').classList.remove('on'); renderHistory(); }); $('#calDim').classList.add('on'); };
+const closeCal = () => $('#calDim').classList.remove('on');
+$('#dateBtn').onclick = () => { openCal($('#histCal'), histDate, d => { histDate = d; closeCal(); renderHistory(); }, closeCal); $('#calDim').classList.add('on'); };
+/* 딤 영역을 누르면 그 창의 취소 버튼과 같게 닫힘 */
+document.querySelectorAll('.dim[data-dimclose]').forEach(d => d.addEventListener('click', e => { if (e.target === d) $(d.dataset.dimclose).click(); }));
 $('#calDim').onclick = e => { if (e.target.id==='calDim') e.currentTarget.classList.remove('on'); };
 $('#filterBtn').onclick = () => {
   $('#sheet').innerHTML = `<h3>필터</h3><div class="opts">${Object.entries(FILTERS).map(([k,v])=>`<button data-f="${k}" class="${k===histFilter?'on':''}">${v}</button>`).join('')}</div>`;
@@ -908,7 +911,7 @@ $('#sheetDim').onclick = e => {
 };
 
 /* 캘린더 */
-function openCal(el, selected, onPick){
+function openCal(el, selected, onPick, onClose){
   let view = new Date(selected.getFullYear(), selected.getMonth(), 1);
   const draw = () => {
     const y = view.getFullYear(), mo = view.getMonth();
@@ -922,10 +925,11 @@ function openCal(el, selected, onPick){
       cells += `<button class="${cls}" data-day="${d}" ${off?'disabled':''}>${d}</button>`;
     }
     const canNext = new Date(y, mo+1, 1) <= TODAY;
-    el.innerHTML = `<div class="top"><b>${y}년 ${mo+1}월</b><button class="nav" data-m="-1"><img src="assets/ic_cal_prev.svg" alt="이전 달"></button><button class="nav" data-m="1" ${canNext?'':'disabled style="opacity:.4"'}><img src="assets/ic_cal_next.svg" alt="다음 달"></button></div><div class="grid">${cells}</div>`;
+    el.innerHTML = `<div class="top"><b>${y}년 ${mo+1}월</b><button class="nav" data-m="-1"><img src="assets/ic_cal_prev.svg" alt="이전 달"></button><button class="nav" data-m="1" ${canNext?'':'disabled style="opacity:.4"'}><img src="assets/ic_cal_next.svg" alt="다음 달"></button></div><div class="grid">${cells}</div>${onClose?'<button class="close" data-close>닫기</button>':''}`;
   };
   el.onclick = e => {
     e.stopPropagation();
+    if (onClose && e.target.closest('[data-close]')){ onClose(); return; }
     const m = e.target.closest('[data-m]'); if (m && !m.disabled){ view.setMonth(view.getMonth()+ +m.dataset.m); draw(); return; }
     const d = e.target.closest('[data-day]'); if (d && !d.disabled){ selected = new Date(view.getFullYear(), view.getMonth(), +d.dataset.day); draw(); onPick(selected); }
   };
