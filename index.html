@@ -68,8 +68,12 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 /* 문구는 위로 올라가며 사라지고, 로고와 글자는 차례로 아래에서 살짝 올라옴 */
 #splash .out{animation:splashOut .4s ease-in both}
 @keyframes splashOut{to{opacity:0;transform:translateY(-40px)}}
-#splash .logoIn{animation:riseIn .6s cubic-bezier(.2,.8,.2,1) both}
-#splash .wordIn{animation:riseIn .6s cubic-bezier(.2,.8,.2,1) .12s both}
+#splash .tag{display:flex;gap:6px;font:700 20px/28px Pretendard;color:#1e293b;margin-bottom:12px}   /* title/sm, 로고 위 12 */
+#splash .tag b{color:#078185;font-weight:700}
+/* 내 손안의 자동 검수 → 로고 → Pilter 순서로 올라옴 */
+#splash .tagIn{animation:riseIn .6s cubic-bezier(.2,.8,.2,1) both}
+#splash .logoIn{animation:riseIn .6s cubic-bezier(.2,.8,.2,1) .25s both}
+#splash .wordIn{animation:riseIn .6s cubic-bezier(.2,.8,.2,1) .37s both}
 @keyframes riseIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
@@ -857,8 +861,8 @@ function runSplash(){
   const b = $('#splashBody');
   b.innerHTML = `<div class="copy fade">매일의 검수에<br><b>도움이 필요할 때</b></div>`;
   setTimeout(()=>{ if(current!=='splash')return; b.firstElementChild?.classList.add('out'); }, 1150);
-  setTimeout(()=>{ if(current!=='splash')return; b.innerHTML = `<img class="logo logoIn" src="assets/logo.png" alt=""><div class="word wordIn">Pilter</div>`; }, 1500);
-  setTimeout(()=>{ if(current!=='splash')return; show(seenOnboarding?'home':'onboarding', {push:false}); }, 2900);
+  setTimeout(()=>{ if(current!=='splash')return; b.innerHTML = `<div class="tag tagIn">내 손안의<b>자동 검수</b></div><img class="logo logoIn" src="assets/logo.png" alt=""><div class="word wordIn">Pilter</div>`; }, 1500);
+  setTimeout(()=>{ if(current!=='splash')return; show(seenOnboarding?'home':'onboarding', {push:false}); }, 3200);
 }
 const ONB = [['검사 시작하기','onboarding_1b','dots1','다음'],['촬영 가이드','onboarding_2a','dots2','다음'],['결과 확인','onboarding_3a','dots3','시작하기']];
 let onbIdx = 0, onbAnim = null;
@@ -1073,7 +1077,7 @@ function statusIcon(st){
   return `<svg class="sico ${st}" width="20" height="20" viewBox="0 0 20 20" aria-label="${{ok:'정상',err:'오류',fail:'실패'}[st]}"><circle cx="10" cy="10" r="10"/>${mark}</svg>`;
 }
 // 검증 데이터셋 샘플 1~5를 약국 바닥에서 찍은 것처럼 합성한 사진 (샘플마다 1장)
-const sampleImg = n => `assets/samples/sample${n}.jpg`;
+const sampleImg = n => `assets/samples/zoom${n}.jpg`;   // 촬영한 사진을 약봉지 위주로 확대해 둔 이미지 (앱에서는 크게 찍은 사진을 그대로 씀)
 [1,2,3,4,5].forEach(n => { new Image().src = sampleImg(n); });   // 샘플 사진을 미리 불러 둬서 화면을 열자마자 바로 뜨게 함
 const idHash = id =>[...String(id)].reduce((s,c)=>(s*31+c.charCodeAt(0)) >>> 0, 7);
 const PATIENT_IMG = ['assets/patient.svg'];   // 성별을 알 수 없으므로 모든 환자에 같은 중성 아이콘을 씀
